@@ -2,12 +2,17 @@ package cpe121.group4;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.Modality;
 import javafx.application.Platform;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,30 +47,50 @@ public class PrimaryController implements Initializable {
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Load data into table
+        // Load data if existing to the table (Pre DB implementation)
         appointmentTable.setItems(appointmentManager.getAppointments());
-        
-        // Set initial status
         updateStatusLabel();
     }
 
     @FXML
     private void showAddAppointment() throws IOException {
-        // Clear any existing appointment data in SecondaryController
+        // Clean up appointment data from secondary
         SecondaryController.setEditingAppointment(null);
-        App.setRoot("secondary");
+        openAppointmentPopup();
     }
 
+    // Handle the editing for appointment
     @FXML
     private void editSelectedAppointment() throws IOException {
         Appointment selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
-            // Pass the selected appointment to SecondaryController for editing
             SecondaryController.setEditingAppointment(selectedAppointment);
-            App.setRoot("secondary");
+            openAppointmentPopup();
         } else {
             showAlert("No Selection", "Please select an appointment to edit.");
         }
+    }
+
+    private void openAppointmentPopup() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("secondary.fxml"));
+        Parent root = loader.load();
+        
+        Stage popupStage = new Stage();
+        popupStage.initStyle(StageStyle.UNDECORATED); // Remove native title bar
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initOwner(App.getPrimaryStage());
+        
+        Scene scene = new Scene(root, 450, 400);
+        popupStage.setScene(scene);
+        popupStage.setTitle("Appointment Form");
+        popupStage.setResizable(false);
+        
+        SecondaryController controller = loader.getController();
+        controller.setPopupStage(popupStage);
+        
+        popupStage.showAndWait();
+        
+        refreshTable();
     }
 
     @FXML
@@ -109,7 +134,6 @@ public class PrimaryController implements Initializable {
         alert.showAndWait();
     }
 
-    // Method to be called when returning from secondary view
     public void onReturnFromSecondary() {
         refreshTable();
     }

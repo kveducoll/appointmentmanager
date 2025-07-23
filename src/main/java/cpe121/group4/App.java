@@ -15,14 +15,20 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage stage) throws IOException {
+        primaryStage = stage;
         scene = new Scene(loadFXML("primary"), 900, 600);
         stage.setTitle("Appointment Manager");
         stage.initStyle(StageStyle.UNDECORATED); // disable native title bar
         stage.setScene(scene);
         stage.show();
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     static void setRoot(String fxml) throws IOException {

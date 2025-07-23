@@ -3,9 +3,6 @@ package cpe121.group4;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-/**
- * Model class representing a general appointment
- */
 public class Appointment {
     private final StringProperty title;
     private final StringProperty participant;

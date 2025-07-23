@@ -4,6 +4,9 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.time.LocalDate;
@@ -11,23 +14,38 @@ import java.time.format.DateTimeFormatter;
 
 public class SecondaryController implements Initializable {
 
+    @FXML private VBox titleBar;
     @FXML private Label formTitle;
     @FXML private TextField titleField;
     @FXML private TextField participantField;
     @FXML private DatePicker appointmentDatePicker;
-    @FXML private TextField appointmentTimeField;
+    @FXML private ComboBox<String> hoursComboBox;
+    @FXML private ComboBox<String> minutesComboBox;
+    @FXML private ComboBox<String> ampmComboBox;
     @FXML private TextArea descriptionArea;
     @FXML private ComboBox<String> statusComboBox;
 
     private AppointmentManager appointmentManager;
     private static Appointment editingAppointment = null;
     private boolean isEditMode = false;
+    private Stage popupStage;
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         appointmentManager = AppointmentManager.getInstance();
         
-        // Initialize status combo box
+        // Initialize Time
+        for (int i = 1; i <= 12; i++) {
+            hoursComboBox.getItems().add(String.format("%02d", i));
+        }
+        for (int i = 0; i <= 59; i++) {
+            minutesComboBox.getItems().add(String.format("%02d", i));
+        }
+        ampmComboBox.getItems().addAll("AM", "PM");
+        
+        // Initiaize Status
         statusComboBox.getItems().addAll(
             "Scheduled", "Confirmed", "In Progress", "Completed", "Cancelled", "No Show"
         );
@@ -40,16 +58,9 @@ public class SecondaryController implements Initializable {
             populateFormWithAppointment(editingAppointment);
         } else {
             isEditMode = false;
-            formTitle.setText("Add New Appointment");
+            formTitle.setText("Appointment Form");
             clearForm();
         }
-
-        // Set up time field validation
-        appointmentTimeField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d{0,2}:?\\d{0,2}")) {
-                appointmentTimeField.setText(oldValue);
-            }
-        });
     }
 
     @FXML
@@ -59,12 +70,12 @@ public class SecondaryController implements Initializable {
             String participant = participantField.getText().trim();
             String appointmentDate = appointmentDatePicker.getValue() != null ? 
                 appointmentDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : "";
-            String appointmentTime = appointmentTimeField.getText().trim();
+            String appointmentTime = getFormattedTime();
             String description = descriptionArea.getText().trim();
             String status = statusComboBox.getValue();
 
             if (isEditMode && editingAppointment != null) {
-                // Update existing appointment
+                // Update appointment
                 editingAppointment.setTitle(title);
                 editingAppointment.setParticipant(participant);
                 editingAppointment.setAppointmentDate(appointmentDate);
@@ -74,7 +85,7 @@ public class SecondaryController implements Initializable {
                 
                 showAlert("Success", "Appointment updated successfully!");
             } else {
-                // Create new appointment
+                // Create appointment
                 Appointment newAppointment = new Appointment(
                     title, participant, appointmentDate, appointmentTime, description, status
                 );
@@ -82,9 +93,11 @@ public class SecondaryController implements Initializable {
                 showAlert("Success", "Appointment added successfully!");
             }
 
-            // Clear editing tas balik sa main
+            // Clear editing and close popup
             editingAppointment = null;
-            App.setRoot("primary");
+            if (popupStage != null) {
+                popupStage.close();
+            }
         }
     }
 
@@ -93,15 +106,48 @@ public class SecondaryController implements Initializable {
         titleField.clear();
         participantField.clear();
         appointmentDatePicker.setValue(null);
-        appointmentTimeField.clear();
+        hoursComboBox.setValue(null);
+        minutesComboBox.setValue(null);
+        ampmComboBox.setValue(null);
         descriptionArea.clear();
         statusComboBox.setValue("Scheduled");
+    }
+
+    private String getFormattedTime() {
+        String hour = hoursComboBox.getValue();
+        String minute = minutesComboBox.getValue();
+        String ampm = ampmComboBox.getValue();
+        
+        if (hour != null && minute != null && ampm != null) {
+            return hour + ":" + minute + " " + ampm;
+        }
+        return "";
     }
 
     @FXML
     private void switchToPrimary() throws IOException {
         editingAppointment = null;
-        App.setRoot("primary");
+        if (popupStage != null) {
+            popupStage.close();
+        }
+    }
+
+    public void setPopupStage(Stage popupStage) {
+        this.popupStage = popupStage;
+    }
+
+    @FXML
+    private void onTitleBarPressed(MouseEvent event) {
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+
+    @FXML
+    private void onTitleBarDragged(MouseEvent event) {
+        if (popupStage != null) {
+            popupStage.setX(event.getScreenX() - xOffset);
+            popupStage.setY(event.getScreenY() - yOffset);
+        }
     }
 
     private boolean validateForm() {
@@ -119,10 +165,8 @@ public class SecondaryController implements Initializable {
             errors.append("- Appointment date is required\n");
         }
 
-        if (appointmentTimeField.getText().trim().isEmpty()) {
-            errors.append("- Appointment time is required\n");
-        } else if (!appointmentTimeField.getText().matches("\\d{1,2}:\\d{2}")) {
-            errors.append("- Appointment time must be in HH:MM format (e.g., 14:30)\n");
+        if (hoursComboBox.getValue() == null || minutesComboBox.getValue() == null || ampmComboBox.getValue() == null) {
+            errors.append("- Complete appointment time is required (Hour, Minute, AM/PM)\n");
         }
 
         if (statusComboBox.getValue() == null || statusComboBox.getValue().isEmpty()) {
@@ -149,9 +193,46 @@ public class SecondaryController implements Initializable {
             appointmentDatePicker.setValue(null);
         }
         
-        appointmentTimeField.setText(appointment.getAppointmentTime());
+        parseAndSetTime(appointment.getAppointmentTime());
         descriptionArea.setText(appointment.getDescription());
         statusComboBox.setValue(appointment.getStatus());
+    }
+
+    // Time parser (Error Prone Zone)
+    private void parseAndSetTime(String timeString) {
+        if (timeString != null && !timeString.trim().isEmpty()) {
+            try {
+                if (timeString.contains("AM") || timeString.contains("PM")) {
+                    // 12-hour format: "02:30 PM"
+                    String[] parts = timeString.split(" ");
+                    String[] timeParts = parts[0].split(":");
+                    String hour = timeParts[0];
+                    String minute = timeParts[1];
+                    String ampm = parts[1];
+                    
+                    hoursComboBox.setValue(hour);
+                    minutesComboBox.setValue(minute);
+                    ampmComboBox.setValue(ampm);
+                } else {
+                    // 24-hour format: "14:30" - convert to 12-hour
+                    String[] timeParts = timeString.split(":");
+                    int hour24 = Integer.parseInt(timeParts[0]);
+                    String minute = timeParts[1];
+                    
+                    String ampm = hour24 >= 12 ? "PM" : "AM";
+                    int hour12 = hour24 > 12 ? hour24 - 12 : (hour24 == 0 ? 12 : hour24);
+                    
+                    hoursComboBox.setValue(String.format("%02d", hour12));
+                    minutesComboBox.setValue(minute);
+                    ampmComboBox.setValue(ampm);
+                }
+            } catch (Exception e) {
+                // Clear if fail
+                hoursComboBox.setValue(null);
+                minutesComboBox.setValue(null);
+                ampmComboBox.setValue(null);
+            }
+        }
     }
 
     private void showAlert(String title, String message) {
