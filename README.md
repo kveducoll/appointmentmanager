@@ -1,7 +1,3 @@
-# Appointment Manager
-
-A JavaFX-based appointment scheduling application with custom UI components. This is a development project focusing on understanding JavaFX structure and FXML integration.
-
 ## Quick Start
 
 ### Prerequisites Check
@@ -58,21 +54,21 @@ mvn clean compile javafx:run
 
 ```
 appointmentmanager/
-├── pom.xml                                 # Maven configuration
-├── README.md                              # This documentation
+├── pom.xml                                  # Maven configuration
+├── README.md                                # This documentation
 └── src/
     └── main/
         ├── java/
         │   └── cpe121/group4/
-        │       ├── App.java                # Main application class
-        │       ├── Appointment.java       # Appointment data model
-        │       ├── AppointmentManager.java # Data management singleton
-        │       ├── PrimaryController.java # Main view controller
+        │       ├── App.java                 # Main application class
+        │       ├── Appointment.java         # Appointment data model
+        │       ├── AppointmentManager.java  # Data management singleton
+        │       ├── PrimaryController.java   # Main view controller
         │       └── SecondaryController.java # Form view controller
         └── resources/
             └── cpe121/group4/
-                ├── primary.fxml           # Main view layout
-                └── secondary.fxml         # Form view layout
+                ├── primary.fxml             # Main view layout
+                └── secondary.fxml           # Form view layout
 ```
 
 ## Architecture
@@ -115,23 +111,7 @@ The application uses **in-memory storage** with JavaFX ObservableList:
 - No database setup required
 - Data persists during application session
 - Data is lost when application closes
-- Perfect for demonstration and testing purposes
-
-## Customization
-
-### Styling
-The application uses inline CSS styling for:
-- Dark theme colors (`#232323`, `#1a1a1a`)
-- Button appearances and borders
-- Text colors and fonts
-- Custom title bar styling
-
-### Adding Features
-To extend the application:
-1. Add new fields to `Appointment.java`
-2. Update FXML forms to include new fields
-3. Modify controllers to handle new data
-4. Update table columns if needed
+- SQL Will be added soon
 
 ## Troubleshooting
 
@@ -168,7 +148,6 @@ mvn javafx:run
 
 ### Code Style
 - Follow Java naming conventions
-- Use meaningful variable and method names
 - Add comments for complex logic
 - Maintain consistent indentation
 
