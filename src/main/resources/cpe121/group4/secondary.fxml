@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group4.SecondaryController">
+    <children>
+        <Label fx:id="formTitle" text="Add New Appointment" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+        
+        <GridPane hgap="10.0" vgap="15.0">
+            <children>
+                <Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="titleField" promptText="Enter appointment title" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="250.0" />
+                
+                <Label text="Participant:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <TextField fx:id="participantField" promptText="Enter participant name" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="250.0" />
+                
+                <Label text="Appointment Date:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <DatePicker fx:id="appointmentDatePicker" promptText="Select date" GridPane.columnIndex="1" GridPane.rowIndex="2" prefWidth="250.0" />
+                
+                <Label text="Appointment Time:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <TextField fx:id="appointmentTimeField" promptText="HH:MM (e.g., 14:30)" GridPane.columnIndex="1" GridPane.rowIndex="3" prefWidth="250.0" />
+                
+                <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <TextArea fx:id="descriptionArea" promptText="Enter appointment description" GridPane.columnIndex="1" GridPane.rowIndex="4" prefWidth="250.0" prefHeight="80.0" wrapText="true" />
+                
+                <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="5" prefWidth="250.0" />
+            </children>
+        </GridPane>
+        
+        <HBox spacing="10.0" alignment="CENTER">
+            <children>
+                <Button fx:id="saveButton" text="Save Appointment" onAction="#saveAppointment" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+                <Button fx:id="clearButton" text="Clear Form" onAction="#clearForm" />
+                <Button fx:id="cancelButton" text="Cancel" onAction="#switchToPrimary" />
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>
