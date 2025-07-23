@@ -20,7 +20,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        scene = new Scene(loadFXML("primary"), 900, 600);
+        scene = new Scene(loadFXML("primary"), 1200, 600);
         stage.setTitle("Appointment Manager");
         stage.initStyle(StageStyle.UNDECORATED); // disable native title bar
         stage.setScene(scene);
