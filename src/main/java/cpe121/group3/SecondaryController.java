@@ -1,4 +1,4 @@
-package cpe121.group4;
+package cpe121.group3;
 
 import java.io.IOException;
 import javafx.fxml.FXML;

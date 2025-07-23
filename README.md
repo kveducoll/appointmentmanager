@@ -59,14 +59,14 @@ appointmentmanager/
 └── src/
     └── main/
         ├── java/
-        │   └── cpe121/group4/
+        │   └── cpe121/group3/
         │       ├── App.java                 # Main application class
         │       ├── Appointment.java         # Appointment data model
         │       ├── AppointmentManager.java  # Data management singleton
         │       ├── PrimaryController.java   # Main view controller
         │       └── SecondaryController.java # Form view controller
         └── resources/
-            └── cpe121/group4/
+            └── cpe121/group3/
                 ├── primary.fxml             # Main view layout
                 └── secondary.fxml           # Form view layout
 ```

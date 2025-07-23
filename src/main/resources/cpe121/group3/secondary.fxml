@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="20.0" style="-fx-background-color: #e6e6e6;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group4.SecondaryController">
+<VBox spacing="20.0" style="-fx-background-color: #e6e6e6;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.SecondaryController">
     <children>
         <VBox fx:id="titleBar" alignment="CENTER" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" style="-fx-padding: 15px;">
          <children>

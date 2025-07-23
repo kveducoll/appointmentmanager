@@ -1,4 +1,4 @@
-package cpe121.group4;
+package cpe121.group3;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
