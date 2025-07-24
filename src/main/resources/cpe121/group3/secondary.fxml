@@ -68,9 +68,9 @@
         
         <HBox alignment="CENTER" spacing="15.0" style="-fx-padding: 20px;">
             <children>
-                <Button fx:id="cancelButton" onAction="#switchToPrimary" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: white; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-text-fill: #333; -fx-border-color: #ccc;" text="Cancel" />
-                <Button fx:id="clearButton" onAction="#clearForm" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: white; -fx-text-fill: #333; -fx-border-color: #ccc; -fx-border-radius: 5px; -fx-background-radius: 5px;" text="Clear Form" />
-                <Button fx:id="saveButton" onAction="#saveAppointment" prefHeight="35.0" prefWidth="145.0" style="-fx-background-color: white; -fx-text-fill: #333; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-border-color: #ccc;" text="Save Appointment" />
+                <Button fx:id="saveButton" onAction="#saveAppointment" prefHeight="35.0" prefWidth="145.0" text="Save Appointment" />
+                <Button fx:id="cancelButton" onAction="#switchToPrimary" prefHeight="35.0" prefWidth="80.0" text="Cancel" />
+                <Button fx:id="clearButton" onAction="#clearForm" prefHeight="35.0" prefWidth="100.0" text="Clear Form" />
             </children>
         </HBox>
     </children>
