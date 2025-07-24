@@ -10,11 +10,12 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.PrimaryController">
    <top>
@@ -23,10 +24,11 @@
             <!-- Custom Title Bar -->
             <HBox fx:id="titleBar" alignment="CENTER" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" prefWidth="832.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
                <children>
-                  <Label style="-fx-text-fill: white; -fx-font-size: 12px;" text="Appointment Manager">
-                     <font>
-                        <Font name="System Bold" size="15.0" />
-                     </font></Label>
+                  <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@assets/Appointment-Manager-Logo.png" />
+                     </image>
+                  </ImageView>
                   <MenuBar style="-fx-background-color: #151515; -fx-text-fill: white;" stylesheets="@styles.css">
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
@@ -47,8 +49,8 @@
                     </menus>
                   </MenuBar>
                   <Region prefHeight="40.0" prefWidth="66.0" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="searchField" prefHeight="30.0" prefWidth="410.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;" />
-                  <Region prefHeight="40.0" prefWidth="207.0" HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="searchField" prefHeight="30.0" prefWidth="392.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;" />
+                  <Region prefHeight="40.0" prefWidth="153.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER_RIGHT" spacing="0.0">
                      <children>
                         <Button fx:id="minimizeButton" onAction="#minimizeWindow" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: transparent; -fx-font-size: 12px; -fx-padding: 5px 10px;" text="–" />

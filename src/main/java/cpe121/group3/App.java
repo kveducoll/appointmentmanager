@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -20,8 +21,12 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        scene = new Scene(loadFXML("primary"), 1200, 600);
+        scene = new Scene(loadFXML("primary"), 1000, 600);
         stage.setTitle("Appointment Manager");
+
+        Image icon = new Image(getClass().getResourceAsStream("/cpe121/group3/assets/Appointment-Manager-Logo.png"));
+        stage.getIcons().add(icon);
+        
         stage.initStyle(StageStyle.UNDECORATED); // disable native title bar
         stage.setScene(scene);
         stage.show();
