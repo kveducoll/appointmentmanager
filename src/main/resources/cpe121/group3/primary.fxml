@@ -48,9 +48,14 @@
                       </Menu>
                     </menus>
                   </MenuBar>
-                  <Region prefHeight="40.0" prefWidth="66.0" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="searchField" prefHeight="30.0" prefWidth="392.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;" />
-                  <Region prefHeight="40.0" prefWidth="153.0" HBox.hgrow="ALWAYS" />
+                  <Region prefHeight="40.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #363636; -fx-border-color: white; -fx-background-radius: 5; -fx-border-radius: 5;" text="🏠" textFill="WHITE" />
+                  <Region prefHeight="40.0" prefWidth="10.0" />
+                  <TextField fx:id="searchField" prefHeight="30.0" prefWidth="392.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;">
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding></TextField>
+                  <Region prefHeight="48.0" prefWidth="90.0" HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER_RIGHT" spacing="0.0">
                      <children>
                         <Button fx:id="minimizeButton" onAction="#minimizeWindow" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: transparent; -fx-font-size: 12px; -fx-padding: 5px 10px;" text="–" />
@@ -65,12 +70,14 @@
                <children>
                   <BorderPane prefHeight="83.0" prefWidth="812.0">
                      <left>
-                        <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="363.0" spacing="10.0" style="-fx-background-color: #282828; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
+                        <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="561.0" spacing="10.0" style="-fx-background-color: #282828; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="addAppointmentButton" onAction="#showAddAppointment" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" text="➕" textFill="WHITE" />
                               <Button fx:id="editAppointmentButton" onAction="#editSelectedAppointment" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="📝 Update" textFill="WHITE" />
-                              <Button fx:id="refreshButton" onAction="#refreshTable" prefHeight="35.0" prefWidth="85.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="🔃 Refresh" textFill="WHITE" />
-                              <Button fx:id="deleteAppointmentButton" onAction="#deleteSelectedAppointment" prefHeight="35.0" prefWidth="76.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="🗑 Delete" textFill="WHITE" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="🖊 Set Status" textFill="WHITE" />
+                              <Button layoutX="176.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="⚙ Filter" textFill="WHITE" />
+                              <Button fx:id="refreshButton" onAction="#refreshTable" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="🔃 Refresh" textFill="WHITE" />
+                              <Button fx:id="deleteAppointmentButton" onAction="#deleteSelectedAppointment" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="🗑 Delete" textFill="WHITE" />
                            </children>
                            <padding>
                               <Insets left="10.0" right="10.0" />
@@ -86,8 +93,8 @@
                               <Insets left="10.0" right="10.0" />
                            </padding>
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="💾 Export" textFill="WHITE" />
-                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="📥 Import" textFill="WHITE" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="💾 Save" textFill="WHITE" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="📄 Print" textFill="WHITE" />
                            </children>
                         </HBox>
                      </right>
