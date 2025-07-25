@@ -54,7 +54,7 @@ public class SecondaryController implements Initializable {
         // Check if Existing Appointment
         if (editingAppointment != null) {
             isEditMode = true;
-            formTitle.setText("Edit Appointment");
+            formTitle.setText("Update Appointment");
             populateFormWithAppointment(editingAppointment);
         } else {
             isEditMode = false;
