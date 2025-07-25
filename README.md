@@ -73,6 +73,7 @@ appointmentmanager/
                 ├── tableview.fxml                      # Table view layout
                 ├── assets/
                 │   └── Appointment-Manager-Logo.png    # Application logo
+                ├── iconpack/                           # UI icons for buttons and interface
                 └── style/
                     └── tableviewMenuStyle.css          # CSS styling
 ```
