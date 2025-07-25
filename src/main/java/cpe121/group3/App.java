@@ -21,7 +21,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        scene = new Scene(loadFXML("primary"), 1000, 600);
+        scene = new Scene(loadFXML("tableview"), 1000, 600);
         stage.setTitle("Appointment Manager");
 
         Image icon = new Image(getClass().getResourceAsStream("/cpe121/group3/assets/Appointment-Manager-Logo.png"));

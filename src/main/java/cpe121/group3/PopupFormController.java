@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class SecondaryController implements Initializable {
+public class PopupFormController implements Initializable {
 
     @FXML private VBox titleBar;
     @FXML private Label formTitle;
@@ -125,7 +125,7 @@ public class SecondaryController implements Initializable {
     }
 
     @FXML
-    private void switchToPrimary() throws IOException {
+    private void switchToTableView() throws IOException {
         editingAppointment = null;
         if (popupStage != null) {
             popupStage.close();

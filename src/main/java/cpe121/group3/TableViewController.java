@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Optional;
 
-public class PrimaryController implements Initializable {
+public class TableViewController implements Initializable {
 
     @FXML private TableView<Appointment> appointmentTable;
     @FXML private TableColumn<Appointment, String> titleColumn;
@@ -54,8 +54,8 @@ public class PrimaryController implements Initializable {
 
     @FXML
     private void showAddAppointment() throws IOException {
-        // Clean up appointment data from secondary
-        SecondaryController.setEditingAppointment(null);
+        // Clean up appointment data from popup form
+        PopupFormController.setEditingAppointment(null);
         openAppointmentPopup();
     }
 
@@ -64,7 +64,7 @@ public class PrimaryController implements Initializable {
     private void editSelectedAppointment() throws IOException {
         Appointment selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
-            SecondaryController.setEditingAppointment(selectedAppointment);
+            PopupFormController.setEditingAppointment(selectedAppointment);
             openAppointmentPopup();
         } else {
             showAlert("No Selection", "Please select an appointment to edit.");
@@ -72,7 +72,7 @@ public class PrimaryController implements Initializable {
     }
 
     private void openAppointmentPopup() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("secondary.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("popupform.fxml"));
         Parent root = loader.load();
         
         Stage popupStage = new Stage();
@@ -85,7 +85,7 @@ public class PrimaryController implements Initializable {
         popupStage.setTitle("Appointment Form");
         popupStage.setResizable(false);
         
-        SecondaryController controller = loader.getController();
+        PopupFormController controller = loader.getController();
         controller.setPopupStage(popupStage);
         
         popupStage.showAndWait();
@@ -134,7 +134,7 @@ public class PrimaryController implements Initializable {
         alert.showAndWait();
     }
 
-    public void onReturnFromSecondary() {
+    public void onReturnFromPopupForm() {
         refreshTable();
     }
 
