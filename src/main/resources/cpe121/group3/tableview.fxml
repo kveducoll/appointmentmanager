@@ -29,7 +29,7 @@
                         <Image url="@assets/Appointment-Manager-Logo.png" />
                      </image>
                   </ImageView>
-                  <MenuBar style="-fx-background-color: #151515; -fx-text-fill: white;" stylesheets="@styles.css">
+                  <MenuBar style="-fx-background-color: #151515; -fx-text-fill: white;" stylesheets="@style/tableviewMenuStyle.css">
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
                         <items>
