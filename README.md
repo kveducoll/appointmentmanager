@@ -1,9 +1,9 @@
 ## Quick Start
 
-### Prerequisites Check
-- [ ] Java JDK 11+ installed
-- [ ] Maven 3.6+ installed  
-- [ ] JavaFX runtime available
+### Prerequisites
+- Java JDK 11+ installed
+- Maven 3.6+ installed  
+- JavaFX runtime available
 
 ### Build and Run (5 minutes)
 ```bash
@@ -54,29 +54,35 @@ mvn clean compile javafx:run
 
 ```
 appointmentmanager/
-├── pom.xml                                  # Maven configuration
-├── README.md                                # This documentation
+├── pom.xml                                             # Maven configuration
+├── README.md                                           # This documentation
 └── src/
     └── main/
         ├── java/
         │   └── cpe121/group3/
-        │       ├── App.java                 # Main application class
-        │       ├── Appointment.java         # Appointment data model
-        │       ├── AppointmentManager.java  # Data management singleton
-        │       ├── PrimaryController.java   # Main view controller
-        │       └── SecondaryController.java # Form view controller
+        │       ├── App.java                            # Main application class
+        │       ├── Appointment.java                    # Appointment data model
+        │       ├── AppointmentManager.java             # Data management singleton
+        │       ├── MainMenuController.java             # Main menu controller
+        │       ├── PopupFormController.java            # Popup form controller
+        │       └── TableViewController.java            # Table view controller
         └── resources/
             └── cpe121/group3/
-                ├── primary.fxml             # Main view layout
-                └── secondary.fxml           # Form view layout
+                ├── mainmenu.fxml                       # Main menu layout
+                ├── popupform.fxml                      # Popup form layout
+                ├── tableview.fxml                      # Table view layout
+                ├── assets/
+                │   └── Appointment-Manager-Logo.png    # Application logo
+                └── style/
+                    └── tableviewMenuStyle.css          # CSS styling
 ```
 
 ## Architecture
 
 ### Model
 - **Model**: `Appointment.java` and `AppointmentManager.java`
-- **View**: FXML files (`primary.fxml`, `secondary.fxml`)
-- **Controller**: `PrimaryController.java` and `SecondaryController.java`
+- **View**: FXML files (`mainmenu.fxml`, `popupform.fxml`, `tableview.fxml`)
+- **Controller**: `MainMenuController.java`, `PopupFormController.java`, and `TableViewController.java`
 
 ### Key Classes
 
@@ -95,15 +101,19 @@ appointmentmanager/
 - Provides CRUD operations (Create, Read, Update, Delete)
 - Uses ObservableList for real-time UI updates
 
-#### `PrimaryController.java`
-- Controls the main application view
-- Handles table display and appointment operations
-- Implements custom window controls (minimize, maximize, close, drag)
+#### `MainMenuController.java`
+- Controls the main menu view
+- Handles navigation and table display
+- Implements custom window controls
 
-#### `SecondaryController.java`
-- Controls the appointment form view
+#### `PopupFormController.java`
+- Controls the popup form view
 - Handles form validation and data input
 - Manages both add and edit modes
+
+#### `TableViewController.java`
+- Manages the table view layout
+- Handles table-specific operations like sorting and filtering
 
 ## Data Storage
 
@@ -111,7 +121,7 @@ The application uses **in-memory storage** with JavaFX ObservableList:
 - No database setup required
 - Data persists during application session
 - Data is lost when application closes
-- SQL Will be added soon
+- SQLite Will be added soon
 
 ## Troubleshooting
 
@@ -145,16 +155,3 @@ mvn clean compile
 # Run with Maven
 mvn javafx:run
 ```
-
-### Code Style
-- Follow Java naming conventions
-- Add comments for complex logic
-- Maintain consistent indentation
-
-## Version History
-
-- **Version 1.0**: Initial release with core appointment management features
-- Custom title bar implementation
-- Dark theme styling
-- CRUD operations for appointments
-- Form validation and error handling
