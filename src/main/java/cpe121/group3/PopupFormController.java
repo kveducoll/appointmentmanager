@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class SecondaryController implements Initializable {
+public class PopupFormController implements Initializable {
 
     @FXML private VBox titleBar;
     @FXML private Label formTitle;
