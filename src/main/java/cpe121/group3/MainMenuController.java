@@ -6,9 +6,14 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
+
 import java.io.IOException;
+import java.time.LocalTime;
 
 public class MainMenuController {
+
+    @FXML private Label greetLabel;
 
     @FXML
     private Button newButton;
@@ -25,7 +30,20 @@ public class MainMenuController {
 
     @FXML
     private void initialize() {
-        // This method is called automatically after the FXML file is loaded
+        LocalTime localTime = LocalTime.now();
+        int hour = localTime.getHour();
+        String greeting;
+
+        if (hour >= 5 && hour < 12) {
+            greeting = "Good morning";
+        } else if (hour >= 12 && hour < 18) {
+            greeting = "Good afternoon";
+        } else {
+            greeting = "Good evening";
+        }
+        
+        greetLabel.setText(greeting);
+
         setupWindowDragging();
     }
 

@@ -22,7 +22,7 @@
       <VBox spacing="0.0">
          <children>
             <!-- Custom Title Bar -->
-            <HBox fx:id="titleBar" alignment="CENTER" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" prefWidth="832.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
+            <HBox fx:id="titleBar" alignment="CENTER" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="47.0" prefWidth="1017.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
                <children>
                   <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -49,7 +49,7 @@
                     </menus>
                   </MenuBar>
                   <Region prefHeight="40.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #363636; -fx-border-color: white; -fx-background-radius: 5; -fx-border-radius: 5;" text="🏠" textFill="WHITE" />
+                  <Button mnemonicParsing="false" onAction="#goToMainMenu" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #363636; -fx-border-color: white; -fx-background-radius: 5; -fx-border-radius: 5;" text="🏠" textFill="WHITE" />
                   <Region prefHeight="40.0" prefWidth="10.0" />
                   <TextField fx:id="searchField" prefHeight="30.0" prefWidth="392.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;">
                      <padding>

@@ -174,4 +174,14 @@ public class TableViewController implements Initializable {
     private void closeWindow() {
         Platform.exit();
     }
+
+    @FXML
+    private void goToMainMenu() {
+        try {
+            App.setRoot("mainmenu");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to load mainmenu.fxml");
+        }
+    }
 }
