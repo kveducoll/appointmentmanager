@@ -14,6 +14,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Modality;
 import javafx.application.Platform;
+import javafx.print.PrinterJob;
+import javafx.print.PageLayout;
+import javafx.print.Printer;
+import javafx.print.PageOrientation;
+import javafx.scene.Node;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Optional;
@@ -29,6 +36,7 @@ public class TableViewController implements Initializable {
     @FXML private TableColumn<Appointment, String> statusColumn;
     @FXML private Label statusLabel;
     @FXML private HBox titleBar;
+    @FXML private Button printButton;
 
     private AppointmentManager appointmentManager;
     private double xOffset = 0;
@@ -182,6 +190,51 @@ public class TableViewController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to load mainmenu.fxml");
+        }
+    }
+
+    @FXML
+    private void printAppointments() {
+        PrinterJob printerJob = PrinterJob.createPrinterJob();
+        if (printerJob != null && printerJob.showPrintDialog(App.getPrimaryStage())) {
+            
+            double leftMargin = 10;  
+            double topMargin = 0;  
+            double rightMargin = 10;  
+            double bottomMargin = 10;  
+            
+            // Margin para sa page printing
+            Printer printer = printerJob.getPrinter();
+            PageLayout pageLayout = printer.createPageLayout(
+                printer.getDefaultPageLayout().getPaper(),
+                PageOrientation.PORTRAIT,
+                leftMargin, rightMargin, topMargin, bottomMargin
+            );
+            
+            // Apply the custom page layout
+            printerJob.getJobSettings().setPageLayout(pageLayout);
+            
+            // Adjust Scaling for table to fit on printing
+            Node tableToPrint = appointmentTable;
+            Scale scale = new Scale(0.6, 0.6);
+            
+            // Optional: Add translation to position the table within margins
+            Translate translate = new Translate(leftMargin/2, topMargin/2);
+            
+            tableToPrint.getTransforms().addAll(scale, translate);
+            boolean success = printerJob.printPage(tableToPrint);
+            
+            // Revert changes back to normal
+            tableToPrint.getTransforms().removeAll(scale, translate);
+            
+            if (success) {
+                printerJob.endJob();
+                statusLabel.setText("Appointments printed successfully with custom margins.");
+            } else {
+                statusLabel.setText("Printing failed.");
+            }
+        } else {
+            statusLabel.setText("Printing cancelled or no printer available.");
         }
     }
 }

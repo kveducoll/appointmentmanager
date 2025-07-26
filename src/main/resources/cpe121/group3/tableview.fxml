@@ -152,9 +152,9 @@
                         <Insets bottom="10.0" />
                      </padding>
                      <right>
-                        <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="55.0" prefWidth="436.0" spacing="10.0" style="-fx-background-color: #151515; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
+                        <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="55.0" prefWidth="436.0" spacing="5.0" style="-fx-background-color: #151515; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
                            <padding>
-                              <Insets left="10.0" right="10.0" />
+                              <Insets left="5.0" right="5.0" />
                            </padding>
                            <children>
                               <Button contentDisplay="LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
@@ -166,7 +166,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button contentDisplay="LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="50.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
+                              <Button fx:id="printButton" contentDisplay="LEFT" mnemonicParsing="false" onAction="#printAppointments" prefHeight="35.0" prefWidth="50.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
                                  <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
