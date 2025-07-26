@@ -1,0 +1,41 @@
+/* Simple button styles for tableview.fxml */
+
+/* Base button style - applies to all buttons (excluding window controls) */
+Button {
+    -fx-cursor: default !important;
+}
+
+/* Exclude window control buttons from styling */
+#minimizeButton,
+#maximizeButton, 
+#closeButton {
+    -fx-cursor: default;
+}
+
+/* Hover effects - light grey for all interactive buttons */
+Button:hover {
+    -fx-background-color: #555555 !important;
+}
+
+/* Exclude window control buttons from hover effects */
+#minimizeButton:hover,
+#maximizeButton:hover {
+    -fx-background-color: #555555 !important;
+}
+
+/* Special red hover effect for close button */
+#closeButton:hover {
+    -fx-background-color: #ff4444 !important;
+}
+
+/* Pressed/Clicked effects - dark grey for all interactive buttons */
+Button:pressed {
+    -fx-background-color: #151515 !important;
+}
+
+/* Exclude window control buttons from pressed effects */
+#minimizeButton:pressed,
+#maximizeButton:pressed,
+#closeButton:pressed {
+    -fx-background-color: transparent !important;
+}
