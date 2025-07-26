@@ -280,7 +280,7 @@ public class TableViewController implements Initializable {
         content.getChildren().add(pageInfo);
         
         // Separator
-        Label separator = new Label("=" + "=".repeat(90));
+        Label separator = new Label("=".repeat(250));
         separator.setFont(Font.font("Arial", 10));
         content.getChildren().add(separator);
         
@@ -290,7 +290,7 @@ public class TableViewController implements Initializable {
         columnHeaders.setFont(Font.font("Courier New", FontWeight.BOLD, 12));
         content.getChildren().add(columnHeaders);
         
-        Label headerSeparator = new Label("-".repeat(180));
+        Label headerSeparator = new Label("-".repeat(250));
         headerSeparator.setFont(Font.font("Arial", 10));
         content.getChildren().add(headerSeparator);
         
