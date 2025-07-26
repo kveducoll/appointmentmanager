@@ -18,12 +18,16 @@ import javafx.print.PrinterJob;
 import javafx.print.PageLayout;
 import javafx.print.Printer;
 import javafx.print.PageOrientation;
-import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TableViewController implements Initializable {
 
@@ -198,43 +202,140 @@ public class TableViewController implements Initializable {
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         if (printerJob != null && printerJob.showPrintDialog(App.getPrimaryStage())) {
             
-            double leftMargin = 10;  
-            double topMargin = 0;  
-            double rightMargin = 10;  
-            double bottomMargin = 10;  
+            // Set margins
+            double leftMargin = 50;  
+            double topMargin = 50;  
+            double rightMargin = 50;  
+            double bottomMargin = 50;  
             
-            // Margin para sa page printing
+            // Configure page layout
             Printer printer = printerJob.getPrinter();
             PageLayout pageLayout = printer.createPageLayout(
                 printer.getDefaultPageLayout().getPaper(),
                 PageOrientation.PORTRAIT,
                 leftMargin, rightMargin, topMargin, bottomMargin
             );
-            
-            // Apply the custom page layout
             printerJob.getJobSettings().setPageLayout(pageLayout);
             
-            // Adjust Scaling for table to fit on printing
-            Node tableToPrint = appointmentTable;
-            Scale scale = new Scale(0.6, 0.6);
-            
-            // Optional: Add translation to position the table within margins
-            Translate translate = new Translate(leftMargin/2, topMargin/2);
-            
-            tableToPrint.getTransforms().addAll(scale, translate);
-            boolean success = printerJob.printPage(tableToPrint);
-            
-            // Revert changes back to normal
-            tableToPrint.getTransforms().removeAll(scale, translate);
+            // Print appointments with pagination
+            boolean success = printAppointmentsWithPagination(printerJob, pageLayout);
             
             if (success) {
                 printerJob.endJob();
-                statusLabel.setText("Appointments printed successfully with custom margins.");
+                statusLabel.setText("All " + appointmentManager.getAppointments().size() + " appointments printed successfully across multiple pages.");
             } else {
                 statusLabel.setText("Printing failed.");
             }
         } else {
             statusLabel.setText("Printing cancelled or no printer available.");
         }
+    }
+    
+    private boolean printAppointmentsWithPagination(PrinterJob printerJob, PageLayout pageLayout) {
+        int appointmentsPerPage = 10;
+        int totalAppointments = appointmentManager.getAppointments().size();
+        int totalPages = (int) Math.ceil((double) totalAppointments / appointmentsPerPage);
+        
+        for (int page = 0; page < totalPages; page++) {
+            int startIndex = page * appointmentsPerPage;
+            int endIndex = Math.min(startIndex + appointmentsPerPage, totalAppointments);
+            
+            VBox pageContent = createPageContent(startIndex, endIndex, page + 1, totalPages);
+            
+            // Content Scaling
+            Scale scale = new Scale(0.8, 0.8);
+            pageContent.getTransforms().add(scale);
+            
+            boolean pageSuccess = printerJob.printPage(pageContent);
+            
+            // Clean up
+            pageContent.getTransforms().remove(scale);
+            
+            if (!pageSuccess) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private VBox createPageContent(int startIndex, int endIndex, int currentPage, int totalPages) {
+        VBox content = new VBox(8);
+        
+        // Page header
+        Label header = new Label("APPOINTMENT MANAGER REPORT");
+        header.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        content.getChildren().add(header);
+        
+        Label groupInfo = new Label("GROUP 3 (CPE 121 FINAL PROJECT)");
+        groupInfo.setFont(Font.font("Arial", 10));
+        content.getChildren().add(groupInfo);
+
+        Label dateTime = new Label("Generated: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        dateTime.setFont(Font.font("Arial", 10));
+        content.getChildren().add(dateTime);
+        
+        Label pageInfo = new Label("Page " + currentPage + " of " + totalPages);
+        pageInfo.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+        content.getChildren().add(pageInfo);
+        
+        // Separator
+        Label separator = new Label("=" + "=".repeat(90));
+        separator.setFont(Font.font("Arial", 10));
+        content.getChildren().add(separator);
+        
+        // Column headers
+        Label columnHeaders = new Label(String.format("%-4s %-25s %-20s %-12s %-10s %-15s", 
+            "#", "Title", "Participant", "Date", "Time", "Status"));
+        columnHeaders.setFont(Font.font("Courier New", FontWeight.BOLD, 12));
+        content.getChildren().add(columnHeaders);
+        
+        Label headerSeparator = new Label("-".repeat(180));
+        headerSeparator.setFont(Font.font("Arial", 10));
+        content.getChildren().add(headerSeparator);
+        
+        // Add appointments for this page
+        for (int i = startIndex; i < endIndex; i++) {
+            Appointment appointment = appointmentManager.getAppointments().get(i);
+            
+            String appointmentLine = String.format("%-4d %-25s %-20s %-12s %-10s %-15s", 
+                i + 1,
+                truncateString(appointment.getTitle(), 24),
+                truncateString(appointment.getParticipant(), 19),
+                appointment.getAppointmentDate(),
+                appointment.getAppointmentTime(),
+                appointment.getStatus()
+            );
+            
+            // Appointment Content Handler (Per table row ni)
+            Label appointmentLabel = new Label(appointmentLine);
+            appointmentLabel.setFont(Font.font("Courier New", 12)); // 12 ang default
+            content.getChildren().add(appointmentLabel);
+            
+            // Description handler
+            if (appointment.getDescription() != null && !appointment.getDescription().trim().isEmpty()) {
+                String description = "     Description: " + truncateString(appointment.getDescription(), 70);
+                Label descLabel = new Label(description);
+                descLabel.setFont(Font.font("Arial", 10));
+                content.getChildren().add(descLabel);
+            }
+            
+           // Spacer
+            Label spacer = new Label("");
+            spacer.setFont(Font.font("Arial", 4));
+            content.getChildren().add(spacer);
+        }
+        
+        // Footer
+        Label footer = new Label("Showing appointments " + (startIndex + 1) + " to " + endIndex + " of " + appointmentManager.getAppointments().size());
+        footer.setFont(Font.font("Arial", 9));
+        content.getChildren().add(footer);
+        
+        return content;
+    }
+    
+    private String truncateString(String str, int maxLength) {
+        if (str == null) return "";
+        return str.length() > maxLength ? str.substring(0, maxLength - 3) + "..." : str;
     }
 }
