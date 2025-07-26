@@ -12,7 +12,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import java.io.File;
 import javafx.application.Platform;
 import javafx.print.PrinterJob;
 import javafx.print.PageLayout;
@@ -150,6 +152,108 @@ public class TableViewController implements Initializable {
         refreshTable();
     }
 
+    @FXML
+    private void saveAppointments() {
+        if (appointmentManager.isFileOpen()) {
+            // Save to current file
+            if (appointmentManager.save()) {
+                statusLabel.setText("Appointments saved successfully.");
+            } else {
+                statusLabel.setText("Failed to save appointments.");
+            }
+        } else {
+            // No file open, prompt for save as
+            saveAppointmentsAs();
+        }
+    }
+
+    @FXML
+    private void saveAppointmentsAs() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Appointments");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Appointment Files", "*.apf")
+        );
+        fileChooser.setInitialFileName("appointments.apf");
+
+        File file = fileChooser.showSaveDialog(App.getPrimaryStage());
+        if (file != null) {
+            String filePath = file.getAbsolutePath();
+            if (appointmentManager.saveToFile(filePath)) {
+                statusLabel.setText("Appointments saved to: " + file.getName());
+            } else {
+                showAlert("Save Error", "Failed to save appointments to file.");
+            }
+        }
+    }
+
+    @FXML
+    private void loadAppointments() {
+        // Check if there are unsaved changes
+        if (appointmentManager.getAppointments().size() > 0 && !appointmentManager.isFileOpen()) {
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Unsaved Changes");
+            confirmAlert.setHeaderText("Load New File");
+            confirmAlert.setContentText("You have unsaved appointments. Loading a new file will replace them. Continue?");
+
+            Optional<ButtonType> result = confirmAlert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Appointments");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Appointment Files", "*.apf")
+        );
+
+        File file = fileChooser.showOpenDialog(App.getPrimaryStage());
+        if (file != null) {
+            String filePath = file.getAbsolutePath();
+            if (appointmentManager.loadFromFile(filePath)) {
+                updateStatusLabel();
+                statusLabel.setText("Appointments loaded from: " + file.getName());
+            } else {
+                showAlert("Load Error", "Failed to load appointments from file.");
+            }
+        }
+    }
+
+    @FXML
+    private void newAppointmentFile() {
+        // Check if there are unsaved changes
+        if (appointmentManager.getAppointments().size() > 0 && !appointmentManager.isFileOpen()) {
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Unsaved Changes");
+            confirmAlert.setHeaderText("Create New File");
+            confirmAlert.setContentText("You have unsaved appointments. Creating a new file will clear them. Continue?");
+
+            Optional<ButtonType> result = confirmAlert.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Create New Appointment File");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Appointment Files", "*.apf")
+        );
+        fileChooser.setInitialFileName("new_appointments.apf");
+
+        File file = fileChooser.showSaveDialog(App.getPrimaryStage());
+        if (file != null) {
+            String filePath = file.getAbsolutePath();
+            if (appointmentManager.createNewFile(filePath)) {
+                updateStatusLabel();
+                statusLabel.setText("New appointment file created: " + file.getName());
+            } else {
+                showAlert("Creation Error", "Failed to create new appointment file.");
+            }
+        }
+    }
+
     // Custom title bar window controls
     @FXML
     private void onTitleBarPressed(MouseEvent event) {
@@ -280,7 +384,7 @@ public class TableViewController implements Initializable {
         content.getChildren().add(pageInfo);
         
         // Separator
-        Label separator = new Label("=" + "=".repeat(90));
+        Label separator = new Label("=".repeat(250));
         separator.setFont(Font.font("Arial", 10));
         content.getChildren().add(separator);
         
@@ -290,7 +394,7 @@ public class TableViewController implements Initializable {
         columnHeaders.setFont(Font.font("Courier New", FontWeight.BOLD, 12));
         content.getChildren().add(columnHeaders);
         
-        Label headerSeparator = new Label("-".repeat(180));
+        Label headerSeparator = new Label("-".repeat(250));
         headerSeparator.setFont(Font.font("Arial", 10));
         content.getChildren().add(headerSeparator);
         

@@ -33,12 +33,12 @@
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
                         <items>
-                          <MenuItem mnemonicParsing="false" text="New Appointment" />
-                          <MenuItem mnemonicParsing="false" text="Open..." />
-                          <MenuItem mnemonicParsing="false" text="Save" />
-                          <MenuItem mnemonicParsing="false" text="Save As..." />
-                          <MenuItem mnemonicParsing="false" text="Print..." />
-                          <MenuItem mnemonicParsing="false" text="Close" />
+                          <MenuItem mnemonicParsing="false" onAction="#showAddAppointment" text="New Appointment" />
+                          <MenuItem mnemonicParsing="false" onAction="#loadAppointments" text="Open..." />
+                          <MenuItem mnemonicParsing="false" onAction="#saveAppointments" text="Save" />
+                          <MenuItem mnemonicParsing="false" onAction="#saveAppointmentsAs" text="Save As..." />
+                          <MenuItem mnemonicParsing="false" onAction="#printAppointments" text="Print..." />
+                          <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="Edit">
@@ -157,7 +157,7 @@
                               <Insets left="5.0" right="5.0" />
                            </padding>
                            <children>
-                              <Button contentDisplay="LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
+                              <Button contentDisplay="LEFT" mnemonicParsing="false" onAction="#saveAppointments" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
                                  <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
