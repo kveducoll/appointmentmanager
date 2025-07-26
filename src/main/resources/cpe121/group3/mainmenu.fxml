@@ -54,7 +54,7 @@
    <left>
       <VBox prefHeight="540.0" prefWidth="214.0" style="-fx-background-color: #202020;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewButton" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #09ab72; -fx-background-radius: 15;" text="Create new" textFill="WHITE">
+            <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewButton" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #09ab72; -fx-background-radius: 15;" text="Open table" textFill="WHITE">
                <VBox.margin>
                   <Insets left="20.0" top="30.0" />
                </VBox.margin>
@@ -106,18 +106,14 @@
             <Region prefHeight="57.0" prefWidth="786.0" BorderPane.alignment="CENTER" />
          </bottom>
          <center>
-            <BorderPane prefHeight="330.0" prefWidth="666.0" style="-fx-background-color: #252525; -fx-background-radius: 5;" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="dropArea" prefHeight="330.0" prefWidth="666.0" style="-fx-background-color: #252525; -fx-background-radius: 5;" BorderPane.alignment="CENTER">
                <center>
-                  <Label prefHeight="25.0" prefWidth="233.0" text="Drop .apf here (Not operational)" textFill="#686868" BorderPane.alignment="CENTER">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
+                  <Label fx:id="dropLabel" text="Drop and drop .apf files here" textAlignment="CENTER" textFill="#6b6b6b" BorderPane.alignment="CENTER" />
                </center>
             </BorderPane>
          </center>
          <top>
-            <VBox alignment="CENTER" prefHeight="167.0" prefWidth="786.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="786.0" BorderPane.alignment="CENTER">
                <children>
                   <Region prefHeight="200.0" prefWidth="200.0">
                      <VBox.margin>
