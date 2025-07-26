@@ -6,9 +6,11 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
+import java.io.File;
 import java.time.LocalTime;
 
 public class MainMenuController {
@@ -20,6 +22,9 @@ public class MainMenuController {
 
     @FXML
     private Button exitButton;
+
+    @FXML
+    private Button loadButton;
 
     @FXML
     private HBox titleBar;
@@ -74,6 +79,31 @@ public class MainMenuController {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to load tableview.fxml");
+        }
+    }
+
+    @FXML
+    private void handleLoadButton() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Appointments");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Appointment Files", "*.apf")
+        );
+
+        File file = fileChooser.showOpenDialog(App.getPrimaryStage());
+        if (file != null) {
+            AppointmentManager appointmentManager = AppointmentManager.getInstance();
+            if (appointmentManager.loadFromFile(file.getAbsolutePath())) {
+                try {
+                    // Navigate to the table view after successful load
+                    App.setRoot("tableview");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.err.println("Failed to load tableview.fxml");
+                }
+            } else {
+                System.err.println("Failed to load appointments from file: " + file.getName());
+            }
         }
     }
 
