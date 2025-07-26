@@ -115,7 +115,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="176.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="Filter" textFill="WHITE">
+                              <Button fx:id="filterButton" onAction="#openFilterPopup" layoutX="176.0" layoutY="20.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="80.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="Filter" textFill="WHITE">
                                  <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

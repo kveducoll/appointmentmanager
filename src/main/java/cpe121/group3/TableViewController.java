@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javafx.collections.transformation.FilteredList;
 
 public class TableViewController implements Initializable {
 
@@ -43,8 +44,12 @@ public class TableViewController implements Initializable {
     @FXML private Label statusLabel;
     @FXML private HBox titleBar;
     @FXML private Button printButton;
+    @FXML private Button filterButton;
+    @FXML private TextField searchField;
 
     private AppointmentManager appointmentManager;
+    private FilteredList<Appointment> filteredAppointments;
+    private FilterCriteria currentFilterCriteria; // Store current filter criteria
     private double xOffset = 0;
     private double yOffset = 0;
     private boolean isMaximized = false;
@@ -52,6 +57,9 @@ public class TableViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         appointmentManager = AppointmentManager.getInstance();
+        
+        // Initialize filter criteria
+        currentFilterCriteria = new FilterCriteria();
         
         // Set up table columns
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -61,9 +69,171 @@ public class TableViewController implements Initializable {
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Load data if existing to the table (Pre DB implementation)
-        appointmentTable.setItems(appointmentManager.getAppointments());
+        // Prepare search bar
+        filteredAppointments = new FilteredList<>(appointmentManager.getAppointments(), p -> true);
+        appointmentTable.setItems(filteredAppointments);
+        setupSearchFunctionality();
+        
         updateStatusLabel();
+    }
+
+    // Setup search bar 
+    private void setupSearchFunctionality() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            applyAllFilters();
+        });
+    }
+
+    // Proper implementation if filter is active and search bar is used
+    private void applyAllFilters() {
+        filteredAppointments.setPredicate(appointment -> {
+            // First check search filter
+            boolean matchesSearch = checkSearchFilter(appointment);
+            
+            // Then check advanced filters
+            boolean matchesAdvancedFilters = checkAdvancedFilters(appointment);
+            
+            // Both must be true
+            return matchesSearch && matchesAdvancedFilters;
+        });
+        
+        // Update status label to show filtered results
+        updateStatusLabelWithSearch();
+    }
+
+    private boolean checkSearchFilter(Appointment appointment) {
+        String searchText = searchField.getText();
+        
+        // If search field is empty, return true
+        if (searchText == null || searchText.trim().isEmpty()) {
+            return true;
+        }
+        
+        searchText = searchText.toLowerCase().trim();
+        
+        // Search in title and participant fields (case-insensitive)
+        String title = appointment.getTitle() != null ? appointment.getTitle().toLowerCase() : "";
+        String participant = appointment.getParticipant() != null ? appointment.getParticipant().toLowerCase() : "";
+        
+        boolean matchesTitle = title.contains(searchText);
+        boolean matchesParticipant = participant.contains(searchText);
+        
+        return matchesTitle || matchesParticipant;
+    }
+
+    private boolean checkAdvancedFilters(Appointment appointment) {
+        // If no advanced filters are active, return true
+        if (currentFilterCriteria == null || !currentFilterCriteria.hasActiveFilters()) {
+            return true;
+        }
+        
+        // Check each filter condition
+        boolean matches = true;
+        
+        // Title filter
+        if (currentFilterCriteria.isTitleFilterEnabled()) {
+            String titleFilter = currentFilterCriteria.getTitleFilter();
+            if (titleFilter != null && !titleFilter.isEmpty()) {
+                String appointmentTitle = appointment.getTitle() != null ? appointment.getTitle() : "";
+                matches = matches && matchesText(appointmentTitle, titleFilter, 
+                    currentFilterCriteria.isCaseSensitive(), currentFilterCriteria.isExactMatch());
+            }
+        }
+        
+        // Participant filter
+        if (currentFilterCriteria.isParticipantFilterEnabled()) {
+            String participantFilter = currentFilterCriteria.getParticipantFilter();
+            if (participantFilter != null && !participantFilter.isEmpty()) {
+                String appointmentParticipant = appointment.getParticipant() != null ? appointment.getParticipant() : "";
+                matches = matches && matchesText(appointmentParticipant, participantFilter, 
+                    currentFilterCriteria.isCaseSensitive(), currentFilterCriteria.isExactMatch());
+            }
+        }
+        
+        // Date range filter
+        if (currentFilterCriteria.isDateRangeFilterEnabled()) {
+            String appointmentDateStr = appointment.getAppointmentDate();
+            if (appointmentDateStr != null && !appointmentDateStr.isEmpty()) {
+                matches = matches && matchesDateRange(appointmentDateStr, 
+                    currentFilterCriteria.getFromDate(), currentFilterCriteria.getToDate());
+            }
+        }
+        
+        // Status filter
+        if (currentFilterCriteria.isStatusFilterEnabled()) {
+            String statusFilter = currentFilterCriteria.getStatusFilter();
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                String appointmentStatus = appointment.getStatus() != null ? appointment.getStatus() : "";
+                matches = matches && statusFilter.equals(appointmentStatus);
+            }
+        }
+        
+        // Description filter
+        if (currentFilterCriteria.isDescriptionFilterEnabled()) {
+            String descriptionFilter = currentFilterCriteria.getDescriptionFilter();
+            if (descriptionFilter != null && !descriptionFilter.isEmpty()) {
+                String appointmentDescription = appointment.getDescription() != null ? appointment.getDescription() : "";
+                matches = matches && matchesText(appointmentDescription, descriptionFilter, 
+                    currentFilterCriteria.isCaseSensitive(), currentFilterCriteria.isExactMatch());
+            }
+        }
+        
+        return matches;
+    }
+
+    // Apply advanced filters to the table
+    public void applyAdvancedFilter(FilterCriteria criteria) {
+        // Store the current filter criteria to make it persistent
+        this.currentFilterCriteria = criteria;
+        
+        // Apply all filters (search + advanced)
+        applyAllFilters();
+    }
+
+    private boolean matchesText(String text, String filter, boolean caseSensitive, boolean exactMatch) {
+        if (text == null || filter == null) {
+            return false;
+        }
+        
+        String textToCheck = caseSensitive ? text : text.toLowerCase();
+        String filterToCheck = caseSensitive ? filter : filter.toLowerCase();
+        
+        if (exactMatch) {
+            return textToCheck.equals(filterToCheck);
+        } else {
+            return textToCheck.contains(filterToCheck);
+        }
+    }
+
+    private boolean matchesDateRange(String appointmentDateStr, java.time.LocalDate fromDate, java.time.LocalDate toDate) {
+        try {
+            // Parse the appointment date string (assuming format: yyyy-MM-dd)
+            java.time.LocalDate appointmentDate = java.time.LocalDate.parse(appointmentDateStr);
+            
+            // Check if within range
+            boolean afterFrom = (fromDate == null) || !appointmentDate.isBefore(fromDate);
+            boolean beforeTo = (toDate == null) || !appointmentDate.isAfter(toDate);
+            
+            return afterFrom && beforeTo;
+        } catch (Exception e) {
+            // If date parsing fails, exclude from results
+            return false;
+        }
+    }
+
+    // Clear filter then show all appointment
+    public void clearAllFilters() {
+        // Clear the stored filter criteria
+        currentFilterCriteria = new FilterCriteria();
+        
+        // Reapply all filters
+        applyAllFilters();
+    }
+
+    // Clear search bar function
+    @FXML
+    private void clearSearch() {
+        searchField.clear();
     }
 
     @FXML
@@ -141,6 +311,31 @@ public class TableViewController implements Initializable {
     }
 
     @FXML
+    private void openFilterPopup() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("filter.fxml"));
+        Parent root = loader.load();
+        
+        Stage popupStage = new Stage();
+        popupStage.initStyle(StageStyle.UNDECORATED); // Remove native title bar
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initOwner(App.getPrimaryStage());
+        
+        Scene scene = new Scene(root, 490, 450);
+        popupStage.setScene(scene);
+        popupStage.setTitle("Filter Appointments");
+        popupStage.setResizable(false);
+        
+        FilterController controller = loader.getController();
+        controller.setPopupStage(popupStage);
+        controller.setTableViewController(this);
+        
+        popupStage.showAndWait();
+        
+        // Refresh table after filter is applied
+        refreshTable();
+    }
+
+    @FXML
     private void deleteSelectedAppointment() {
         Appointment selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
         if (selectedAppointment != null) {
@@ -153,7 +348,7 @@ public class TableViewController implements Initializable {
             Optional<ButtonType> result = confirmAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 appointmentManager.deleteAppointment(selectedAppointment);
-                updateStatusLabel();
+                updateStatusLabelWithSearch();
                 statusLabel.setText("Appointment deleted successfully.");
             }
         } else {
@@ -164,13 +359,46 @@ public class TableViewController implements Initializable {
     @FXML
     private void refreshTable() {
         appointmentTable.refresh();
-        updateStatusLabel();
+        
+        // Reapply all filters to maintain persistence
+        applyAllFilters();
+        
         statusLabel.setText("Table refreshed.");
+    }
+
+    public FilterCriteria getCurrentFilterCriteria() {
+        return currentFilterCriteria;
     }
 
     private void updateStatusLabel() {
         int totalAppointments = appointmentManager.getAppointments().size();
         statusLabel.setText("Total appointments: " + totalAppointments);
+    }
+
+    private void updateStatusLabelWithSearch() {
+        int filteredCount = filteredAppointments.size();
+        int totalCount = appointmentManager.getAppointments().size();
+        
+        String statusText = "";
+        boolean hasSearch = searchField.getText() != null && !searchField.getText().trim().isEmpty();
+        boolean hasAdvancedFilters = currentFilterCriteria != null && currentFilterCriteria.hasActiveFilters();
+        
+        if (!hasSearch && !hasAdvancedFilters) {
+            statusText = "Total appointments: " + totalCount;
+        } else {
+            statusText = "Showing " + filteredCount + " of " + totalCount + " appointments";
+            
+            // Add filter info
+            if (hasSearch && hasAdvancedFilters) {
+                statusText += " (search + filters active)";
+            } else if (hasSearch) {
+                statusText += " (search active)";
+            } else if (hasAdvancedFilters) {
+                statusText += " (filters active)";
+            }
+        }
+        
+        statusLabel.setText(statusText);
     }
 
     private void showAlert(String title, String message) {
@@ -245,7 +473,7 @@ public class TableViewController implements Initializable {
         if (file != null) {
             String filePath = file.getAbsolutePath();
             if (appointmentManager.loadFromFile(filePath)) {
-                updateStatusLabel();
+                updateStatusLabelWithSearch();
                 statusLabel.setText("Appointments loaded from: " + file.getName());
             } else {
                 showAlert("Load Error", "Failed to load appointments from file.");
@@ -279,7 +507,7 @@ public class TableViewController implements Initializable {
         if (file != null) {
             String filePath = file.getAbsolutePath();
             if (appointmentManager.createNewFile(filePath)) {
-                updateStatusLabel();
+                updateStatusLabelWithSearch();
                 statusLabel.setText("New appointment file created: " + file.getName());
             } else {
                 showAlert("Creation Error", "Failed to create new appointment file.");
