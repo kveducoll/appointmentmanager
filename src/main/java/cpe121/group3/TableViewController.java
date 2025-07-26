@@ -85,6 +85,17 @@ public class TableViewController implements Initializable {
         }
     }
 
+    @FXML
+    private void updateSelectedAppointmentStatus() throws IOException {
+        Appointment selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
+        if (selectedAppointment != null) {
+            StatusUpdateController.setSelectedAppointment(selectedAppointment);
+            openStatusUpdatePopup();
+        } else {
+            showAlert("No Selection", "Please select an appointment to update status.");
+        }
+    }
+
     private void openAppointmentPopup() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("popupform.fxml"));
         Parent root = loader.load();
@@ -100,6 +111,28 @@ public class TableViewController implements Initializable {
         popupStage.setResizable(false);
         
         PopupFormController controller = loader.getController();
+        controller.setPopupStage(popupStage);
+        
+        popupStage.showAndWait();
+        
+        refreshTable();
+    }
+
+    private void openStatusUpdatePopup() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("statusupdate.fxml"));
+        Parent root = loader.load();
+        
+        Stage popupStage = new Stage();
+        popupStage.initStyle(StageStyle.UNDECORATED); // Remove native title bar
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initOwner(App.getPrimaryStage());
+        
+        Scene scene = new Scene(root, 380, 280);
+        popupStage.setScene(scene);
+        popupStage.setTitle("Update Status");
+        popupStage.setResizable(false);
+        
+        StatusUpdateController controller = loader.getController();
         controller.setPopupStage(popupStage);
         
         popupStage.showAndWait();
