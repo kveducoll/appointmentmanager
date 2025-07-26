@@ -49,6 +49,7 @@ public class TableViewController implements Initializable {
 
     private AppointmentManager appointmentManager;
     private FilteredList<Appointment> filteredAppointments;
+    private FilterCriteria currentFilterCriteria; // Store current filter criteria
     private double xOffset = 0;
     private double yOffset = 0;
     private boolean isMaximized = false;
@@ -56,6 +57,9 @@ public class TableViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         appointmentManager = AppointmentManager.getInstance();
+        
+        // Initialize filter criteria
+        currentFilterCriteria = new FilterCriteria();
         
         // Set up table columns
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -76,88 +80,114 @@ public class TableViewController implements Initializable {
     // Setup search bar 
     private void setupSearchFunctionality() {
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredAppointments.setPredicate(appointment -> {
-                // If search field is empty, show all appointments
-                if (newValue == null || newValue.trim().isEmpty()) {
-                    return true;
-                }
-                
-                String searchText = newValue.toLowerCase().trim();
-                
-                // Search in title and participant fields (case-insensitive)
-                String title = appointment.getTitle() != null ? appointment.getTitle().toLowerCase() : "";
-                String participant = appointment.getParticipant() != null ? appointment.getParticipant().toLowerCase() : "";
-                
-                boolean matchesTitle = title.contains(searchText);
-                boolean matchesParticipant = participant.contains(searchText);
-                
-                return matchesTitle || matchesParticipant;
-            });
-            
-            // Update status label to show filtered results
-            updateStatusLabelWithSearch();
+            applyAllFilters();
         });
     }
 
-    public void applyAdvancedFilter(FilterCriteria criteria) {
+    // Proper implementation if filter is active and search bar is used
+    private void applyAllFilters() {
         filteredAppointments.setPredicate(appointment -> {
-            // If no filters are active, show all appointments
-            if (!criteria.hasActiveFilters()) {
-                return true;
-            }
+            // First check search filter
+            boolean matchesSearch = checkSearchFilter(appointment);
             
-            // Check each filter condition
-            boolean matches = true;
+            // Then check advanced filters
+            boolean matchesAdvancedFilters = checkAdvancedFilters(appointment);
             
-            // Title filter
-            if (criteria.isTitleFilterEnabled()) {
-                String titleFilter = criteria.getTitleFilter();
-                if (titleFilter != null && !titleFilter.isEmpty()) {
-                    String appointmentTitle = appointment.getTitle() != null ? appointment.getTitle() : "";
-                    matches = matches && matchesText(appointmentTitle, titleFilter, criteria.isCaseSensitive(), criteria.isExactMatch());
-                }
-            }
-            
-            // Participant filter
-            if (criteria.isParticipantFilterEnabled()) {
-                String participantFilter = criteria.getParticipantFilter();
-                if (participantFilter != null && !participantFilter.isEmpty()) {
-                    String appointmentParticipant = appointment.getParticipant() != null ? appointment.getParticipant() : "";
-                    matches = matches && matchesText(appointmentParticipant, participantFilter, criteria.isCaseSensitive(), criteria.isExactMatch());
-                }
-            }
-            
-            // Date range filter
-            if (criteria.isDateRangeFilterEnabled()) {
-                String appointmentDateStr = appointment.getAppointmentDate();
-                if (appointmentDateStr != null && !appointmentDateStr.isEmpty()) {
-                    matches = matches && matchesDateRange(appointmentDateStr, criteria.getFromDate(), criteria.getToDate());
-                }
-            }
-            
-            // Status filter
-            if (criteria.isStatusFilterEnabled()) {
-                String statusFilter = criteria.getStatusFilter();
-                if (statusFilter != null && !statusFilter.isEmpty()) {
-                    String appointmentStatus = appointment.getStatus() != null ? appointment.getStatus() : "";
-                    matches = matches && statusFilter.equals(appointmentStatus);
-                }
-            }
-            
-            // Description filter
-            if (criteria.isDescriptionFilterEnabled()) {
-                String descriptionFilter = criteria.getDescriptionFilter();
-                if (descriptionFilter != null && !descriptionFilter.isEmpty()) {
-                    String appointmentDescription = appointment.getDescription() != null ? appointment.getDescription() : "";
-                    matches = matches && matchesText(appointmentDescription, descriptionFilter, criteria.isCaseSensitive(), criteria.isExactMatch());
-                }
-            }
-            
-            return matches;
+            // Both must be true
+            return matchesSearch && matchesAdvancedFilters;
         });
         
         // Update status label to show filtered results
         updateStatusLabelWithSearch();
+    }
+
+    private boolean checkSearchFilter(Appointment appointment) {
+        String searchText = searchField.getText();
+        
+        // If search field is empty, return true
+        if (searchText == null || searchText.trim().isEmpty()) {
+            return true;
+        }
+        
+        searchText = searchText.toLowerCase().trim();
+        
+        // Search in title and participant fields (case-insensitive)
+        String title = appointment.getTitle() != null ? appointment.getTitle().toLowerCase() : "";
+        String participant = appointment.getParticipant() != null ? appointment.getParticipant().toLowerCase() : "";
+        
+        boolean matchesTitle = title.contains(searchText);
+        boolean matchesParticipant = participant.contains(searchText);
+        
+        return matchesTitle || matchesParticipant;
+    }
+
+    private boolean checkAdvancedFilters(Appointment appointment) {
+        // If no advanced filters are active, return true
+        if (currentFilterCriteria == null || !currentFilterCriteria.hasActiveFilters()) {
+            return true;
+        }
+        
+        // Check each filter condition
+        boolean matches = true;
+        
+        // Title filter
+        if (currentFilterCriteria.isTitleFilterEnabled()) {
+            String titleFilter = currentFilterCriteria.getTitleFilter();
+            if (titleFilter != null && !titleFilter.isEmpty()) {
+                String appointmentTitle = appointment.getTitle() != null ? appointment.getTitle() : "";
+                matches = matches && matchesText(appointmentTitle, titleFilter, 
+                    currentFilterCriteria.isCaseSensitive(), currentFilterCriteria.isExactMatch());
+            }
+        }
+        
+        // Participant filter
+        if (currentFilterCriteria.isParticipantFilterEnabled()) {
+            String participantFilter = currentFilterCriteria.getParticipantFilter();
+            if (participantFilter != null && !participantFilter.isEmpty()) {
+                String appointmentParticipant = appointment.getParticipant() != null ? appointment.getParticipant() : "";
+                matches = matches && matchesText(appointmentParticipant, participantFilter, 
+                    currentFilterCriteria.isCaseSensitive(), currentFilterCriteria.isExactMatch());
+            }
+        }
+        
+        // Date range filter
+        if (currentFilterCriteria.isDateRangeFilterEnabled()) {
+            String appointmentDateStr = appointment.getAppointmentDate();
+            if (appointmentDateStr != null && !appointmentDateStr.isEmpty()) {
+                matches = matches && matchesDateRange(appointmentDateStr, 
+                    currentFilterCriteria.getFromDate(), currentFilterCriteria.getToDate());
+            }
+        }
+        
+        // Status filter
+        if (currentFilterCriteria.isStatusFilterEnabled()) {
+            String statusFilter = currentFilterCriteria.getStatusFilter();
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                String appointmentStatus = appointment.getStatus() != null ? appointment.getStatus() : "";
+                matches = matches && statusFilter.equals(appointmentStatus);
+            }
+        }
+        
+        // Description filter
+        if (currentFilterCriteria.isDescriptionFilterEnabled()) {
+            String descriptionFilter = currentFilterCriteria.getDescriptionFilter();
+            if (descriptionFilter != null && !descriptionFilter.isEmpty()) {
+                String appointmentDescription = appointment.getDescription() != null ? appointment.getDescription() : "";
+                matches = matches && matchesText(appointmentDescription, descriptionFilter, 
+                    currentFilterCriteria.isCaseSensitive(), currentFilterCriteria.isExactMatch());
+            }
+        }
+        
+        return matches;
+    }
+
+    // Apply advanced filters to the table
+    public void applyAdvancedFilter(FilterCriteria criteria) {
+        // Store the current filter criteria to make it persistent
+        this.currentFilterCriteria = criteria;
+        
+        // Apply all filters (search + advanced)
+        applyAllFilters();
     }
 
     private boolean matchesText(String text, String filter, boolean caseSensitive, boolean exactMatch) {
@@ -191,9 +221,13 @@ public class TableViewController implements Initializable {
         }
     }
 
+    // Clear filter then show all appointment
     public void clearAllFilters() {
-        filteredAppointments.setPredicate(appointment -> true);
-        updateStatusLabelWithSearch();
+        // Clear the stored filter criteria
+        currentFilterCriteria = new FilterCriteria();
+        
+        // Reapply all filters
+        applyAllFilters();
     }
 
     // Clear search bar function
@@ -325,8 +359,15 @@ public class TableViewController implements Initializable {
     @FXML
     private void refreshTable() {
         appointmentTable.refresh();
-        updateStatusLabelWithSearch();
+        
+        // Reapply all filters to maintain persistence
+        applyAllFilters();
+        
         statusLabel.setText("Table refreshed.");
+    }
+
+    public FilterCriteria getCurrentFilterCriteria() {
+        return currentFilterCriteria;
     }
 
     private void updateStatusLabel() {
@@ -334,19 +375,30 @@ public class TableViewController implements Initializable {
         statusLabel.setText("Total appointments: " + totalAppointments);
     }
 
-    /**
-     * Updates the status label to show filtered search results.
-     * Displays both filtered count and total count when search is active.
-     */
     private void updateStatusLabelWithSearch() {
         int filteredCount = filteredAppointments.size();
         int totalCount = appointmentManager.getAppointments().size();
         
-        if (searchField.getText() == null || searchField.getText().trim().isEmpty()) {
-            statusLabel.setText("Total appointments: " + totalCount);
+        String statusText = "";
+        boolean hasSearch = searchField.getText() != null && !searchField.getText().trim().isEmpty();
+        boolean hasAdvancedFilters = currentFilterCriteria != null && currentFilterCriteria.hasActiveFilters();
+        
+        if (!hasSearch && !hasAdvancedFilters) {
+            statusText = "Total appointments: " + totalCount;
         } else {
-            statusLabel.setText("Showing " + filteredCount + " of " + totalCount + " appointments");
+            statusText = "Showing " + filteredCount + " of " + totalCount + " appointments";
+            
+            // Add filter info
+            if (hasSearch && hasAdvancedFilters) {
+                statusText += " (search + filters active)";
+            } else if (hasSearch) {
+                statusText += " (search active)";
+            } else if (hasAdvancedFilters) {
+                statusText += " (filters active)";
+            }
         }
+        
+        statusLabel.setText(statusText);
     }
 
     private void showAlert(String title, String message) {
