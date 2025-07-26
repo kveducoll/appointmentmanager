@@ -8,7 +8,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 public class FilterController implements Initializable {
 
     @FXML private VBox titleBar;
@@ -34,6 +33,7 @@ public class FilterController implements Initializable {
     @FXML private Button cancelButton;
     
     private Stage popupStage;
+    private TableViewController tableViewController;
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -67,15 +67,74 @@ public class FilterController implements Initializable {
         this.popupStage = popupStage;
     }
 
+    public void setTableViewController(TableViewController tableViewController) {
+        this.tableViewController = tableViewController;
+    }
+
     @FXML
     private void applyFilter() {
-        // TODO: Implement filter logic
-        System.out.println("Apply filter clicked - functionality to be implemented");
+        if (tableViewController == null) {
+            System.err.println("TableViewController reference not set");
+            closeFilter();
+            return;
+        }
+
+        // Create filter criteria from UI inputs
+        FilterCriteria criteria = createFilterCriteria();
+        
+        // Apply filter to table view
+        tableViewController.applyAdvancedFilter(criteria);
+        
         closeFilter();
+    }
+
+    /**
+     * Creates FilterCriteria object from current UI state
+     */
+    private FilterCriteria createFilterCriteria() {
+        FilterCriteria criteria = new FilterCriteria();
+        
+        // Title filter
+        criteria.setTitleFilterEnabled(titleFilterEnabled.isSelected());
+        if (criteria.isTitleFilterEnabled() && titleFilterField.getText() != null) {
+            criteria.setTitleFilter(titleFilterField.getText().trim());
+        }
+        
+        // Participant filter
+        criteria.setParticipantFilterEnabled(participantFilterEnabled.isSelected());
+        if (criteria.isParticipantFilterEnabled() && participantFilterField.getText() != null) {
+            criteria.setParticipantFilter(participantFilterField.getText().trim());
+        }
+        
+        // Date range filter
+        criteria.setDateRangeFilterEnabled(dateRangeFilterEnabled.isSelected());
+        if (criteria.isDateRangeFilterEnabled()) {
+            criteria.setFromDate(fromDatePicker.getValue());
+            criteria.setToDate(toDatePicker.getValue());
+        }
+        
+        // Status filter
+        criteria.setStatusFilterEnabled(statusFilterEnabled.isSelected());
+        if (criteria.isStatusFilterEnabled() && statusFilterComboBox.getValue() != null) {
+            criteria.setStatusFilter(statusFilterComboBox.getValue());
+        }
+        
+        // Description filter
+        criteria.setDescriptionFilterEnabled(descriptionFilterEnabled.isSelected());
+        if (criteria.isDescriptionFilterEnabled() && descriptionFilterField.getText() != null) {
+            criteria.setDescriptionFilter(descriptionFilterField.getText().trim());
+        }
+        
+        // Options
+        criteria.setCaseSensitive(caseSensitiveCheckBox.isSelected());
+        criteria.setExactMatch(exactMatchCheckBox.isSelected());
+        
+        return criteria;
     }
 
     @FXML
     private void clearAllFilters() {
+        // Clear UI fields
         titleFilterEnabled.setSelected(false);
         titleFilterField.clear();
         participantFilterEnabled.setSelected(false);
@@ -89,6 +148,11 @@ public class FilterController implements Initializable {
         descriptionFilterField.clear();
         caseSensitiveCheckBox.setSelected(false);
         exactMatchCheckBox.setSelected(false);
+        
+        // Clear filters in table view
+        if (tableViewController != null) {
+            tableViewController.clearAllFilters();
+        }
     }
 
     @FXML
