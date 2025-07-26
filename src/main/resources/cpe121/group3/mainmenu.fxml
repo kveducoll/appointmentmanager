@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #151515;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.MainMenuController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #151515;" stylesheets="@style/mainmenuButtonStyle.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.MainMenuController">
    <top>
       <VBox prefHeight="60.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="titleBar" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #151515;">
+            <HBox fx:id="titleBar" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #151515;">
                <children>
                   <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -31,6 +31,17 @@
                      <HBox.margin>
                         <Insets left="1.0" top="5.0" />
                      </HBox.margin></Label>
+                  <Region prefHeight="40.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER_RIGHT" spacing="0.0">
+                     <children>
+                        <Button fx:id="minimizeButton" onAction="#minimizeWindow" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: transparent; -fx-font-size: 12px; -fx-padding: 5px 10px;" text="–" />
+                        <Button fx:id="maximizeButton" onAction="#maximizeWindow" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: transparent; -fx-font-size: 12px; -fx-padding: 5px 10px;" text="□" />
+                        <Button fx:id="closeButton" onAction="#closeWindow" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: transparent; -fx-font-size: 14px; -fx-padding: 6px 10px 4px 10px;" text="×">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin></Button>
+                     </children>
+                  </HBox>
                </children>
                <padding>
                   <Insets left="10.0" top="10.0" />

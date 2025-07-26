@@ -112,4 +112,35 @@ public class MainMenuController {
         // Close the application
         Platform.exit();
     }
+
+    // Window control methods
+    @FXML
+    private void onTitleBarPressed(MouseEvent event) {
+        xOffset = event.getSceneX();
+        yOffset = event.getSceneY();
+    }
+
+    @FXML
+    private void onTitleBarDragged(MouseEvent event) {
+        Stage stage = (Stage) titleBar.getScene().getWindow();
+        stage.setX(event.getScreenX() - xOffset);
+        stage.setY(event.getScreenY() - yOffset);
+    }
+
+    @FXML
+    private void minimizeWindow() {
+        Stage stage = (Stage) titleBar.getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML
+    private void maximizeWindow() {
+        Stage stage = (Stage) titleBar.getScene().getWindow();
+        stage.setMaximized(!stage.isMaximized());
+    }
+
+    @FXML
+    private void closeWindow() {
+        Platform.exit();
+    }
 }
