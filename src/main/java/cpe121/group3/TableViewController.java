@@ -99,6 +99,103 @@ public class TableViewController implements Initializable {
         });
     }
 
+    public void applyAdvancedFilter(FilterCriteria criteria) {
+        filteredAppointments.setPredicate(appointment -> {
+            // If no filters are active, show all appointments
+            if (!criteria.hasActiveFilters()) {
+                return true;
+            }
+            
+            // Check each filter condition
+            boolean matches = true;
+            
+            // Title filter
+            if (criteria.isTitleFilterEnabled()) {
+                String titleFilter = criteria.getTitleFilter();
+                if (titleFilter != null && !titleFilter.isEmpty()) {
+                    String appointmentTitle = appointment.getTitle() != null ? appointment.getTitle() : "";
+                    matches = matches && matchesText(appointmentTitle, titleFilter, criteria.isCaseSensitive(), criteria.isExactMatch());
+                }
+            }
+            
+            // Participant filter
+            if (criteria.isParticipantFilterEnabled()) {
+                String participantFilter = criteria.getParticipantFilter();
+                if (participantFilter != null && !participantFilter.isEmpty()) {
+                    String appointmentParticipant = appointment.getParticipant() != null ? appointment.getParticipant() : "";
+                    matches = matches && matchesText(appointmentParticipant, participantFilter, criteria.isCaseSensitive(), criteria.isExactMatch());
+                }
+            }
+            
+            // Date range filter
+            if (criteria.isDateRangeFilterEnabled()) {
+                String appointmentDateStr = appointment.getAppointmentDate();
+                if (appointmentDateStr != null && !appointmentDateStr.isEmpty()) {
+                    matches = matches && matchesDateRange(appointmentDateStr, criteria.getFromDate(), criteria.getToDate());
+                }
+            }
+            
+            // Status filter
+            if (criteria.isStatusFilterEnabled()) {
+                String statusFilter = criteria.getStatusFilter();
+                if (statusFilter != null && !statusFilter.isEmpty()) {
+                    String appointmentStatus = appointment.getStatus() != null ? appointment.getStatus() : "";
+                    matches = matches && statusFilter.equals(appointmentStatus);
+                }
+            }
+            
+            // Description filter
+            if (criteria.isDescriptionFilterEnabled()) {
+                String descriptionFilter = criteria.getDescriptionFilter();
+                if (descriptionFilter != null && !descriptionFilter.isEmpty()) {
+                    String appointmentDescription = appointment.getDescription() != null ? appointment.getDescription() : "";
+                    matches = matches && matchesText(appointmentDescription, descriptionFilter, criteria.isCaseSensitive(), criteria.isExactMatch());
+                }
+            }
+            
+            return matches;
+        });
+        
+        // Update status label to show filtered results
+        updateStatusLabelWithSearch();
+    }
+
+    private boolean matchesText(String text, String filter, boolean caseSensitive, boolean exactMatch) {
+        if (text == null || filter == null) {
+            return false;
+        }
+        
+        String textToCheck = caseSensitive ? text : text.toLowerCase();
+        String filterToCheck = caseSensitive ? filter : filter.toLowerCase();
+        
+        if (exactMatch) {
+            return textToCheck.equals(filterToCheck);
+        } else {
+            return textToCheck.contains(filterToCheck);
+        }
+    }
+
+    private boolean matchesDateRange(String appointmentDateStr, java.time.LocalDate fromDate, java.time.LocalDate toDate) {
+        try {
+            // Parse the appointment date string (assuming format: yyyy-MM-dd)
+            java.time.LocalDate appointmentDate = java.time.LocalDate.parse(appointmentDateStr);
+            
+            // Check if within range
+            boolean afterFrom = (fromDate == null) || !appointmentDate.isBefore(fromDate);
+            boolean beforeTo = (toDate == null) || !appointmentDate.isAfter(toDate);
+            
+            return afterFrom && beforeTo;
+        } catch (Exception e) {
+            // If date parsing fails, exclude from results
+            return false;
+        }
+    }
+
+    public void clearAllFilters() {
+        filteredAppointments.setPredicate(appointment -> true);
+        updateStatusLabelWithSearch();
+    }
+
     // Clear search bar function
     @FXML
     private void clearSearch() {
@@ -196,11 +293,12 @@ public class TableViewController implements Initializable {
         
         FilterController controller = loader.getController();
         controller.setPopupStage(popupStage);
+        controller.setTableViewController(this);
         
         popupStage.showAndWait();
         
-        // Note: Filter functionality will be implemented later
-        // refreshTable(); // Uncomment when filter logic is implemented
+        // Refresh table after filter is applied
+        refreshTable();
     }
 
     @FXML
