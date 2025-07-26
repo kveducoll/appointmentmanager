@@ -44,6 +44,7 @@ public class TableViewController implements Initializable {
     @FXML private Label statusLabel;
     @FXML private HBox titleBar;
     @FXML private Button printButton;
+    @FXML private Button filterButton;
     @FXML private TextField searchField;
 
     private AppointmentManager appointmentManager;
@@ -176,6 +177,30 @@ public class TableViewController implements Initializable {
         popupStage.showAndWait();
         
         refreshTable();
+    }
+
+    @FXML
+    private void openFilterPopup() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("filter.fxml"));
+        Parent root = loader.load();
+        
+        Stage popupStage = new Stage();
+        popupStage.initStyle(StageStyle.UNDECORATED); // Remove native title bar
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.initOwner(App.getPrimaryStage());
+        
+        Scene scene = new Scene(root, 490, 450);
+        popupStage.setScene(scene);
+        popupStage.setTitle("Filter Appointments");
+        popupStage.setResizable(false);
+        
+        FilterController controller = loader.getController();
+        controller.setPopupStage(popupStage);
+        
+        popupStage.showAndWait();
+        
+        // Note: Filter functionality will be implemented later
+        // refreshTable(); // Uncomment when filter logic is implemented
     }
 
     @FXML
