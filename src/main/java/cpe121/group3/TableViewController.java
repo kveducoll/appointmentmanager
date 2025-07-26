@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javafx.collections.transformation.FilteredList;
 
 public class TableViewController implements Initializable {
 
@@ -43,8 +44,10 @@ public class TableViewController implements Initializable {
     @FXML private Label statusLabel;
     @FXML private HBox titleBar;
     @FXML private Button printButton;
+    @FXML private TextField searchField;
 
     private AppointmentManager appointmentManager;
+    private FilteredList<Appointment> filteredAppointments;
     private double xOffset = 0;
     private double yOffset = 0;
     private boolean isMaximized = false;
@@ -61,9 +64,44 @@ public class TableViewController implements Initializable {
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Load data if existing to the table (Pre DB implementation)
-        appointmentTable.setItems(appointmentManager.getAppointments());
+        // Prepare search bar
+        filteredAppointments = new FilteredList<>(appointmentManager.getAppointments(), p -> true);
+        appointmentTable.setItems(filteredAppointments);
+        setupSearchFunctionality();
+        
         updateStatusLabel();
+    }
+
+    // Setup search bar 
+    private void setupSearchFunctionality() {
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredAppointments.setPredicate(appointment -> {
+                // If search field is empty, show all appointments
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    return true;
+                }
+                
+                String searchText = newValue.toLowerCase().trim();
+                
+                // Search in title and participant fields (case-insensitive)
+                String title = appointment.getTitle() != null ? appointment.getTitle().toLowerCase() : "";
+                String participant = appointment.getParticipant() != null ? appointment.getParticipant().toLowerCase() : "";
+                
+                boolean matchesTitle = title.contains(searchText);
+                boolean matchesParticipant = participant.contains(searchText);
+                
+                return matchesTitle || matchesParticipant;
+            });
+            
+            // Update status label to show filtered results
+            updateStatusLabelWithSearch();
+        });
+    }
+
+    // Clear search bar function
+    @FXML
+    private void clearSearch() {
+        searchField.clear();
     }
 
     @FXML
@@ -153,7 +191,7 @@ public class TableViewController implements Initializable {
             Optional<ButtonType> result = confirmAlert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 appointmentManager.deleteAppointment(selectedAppointment);
-                updateStatusLabel();
+                updateStatusLabelWithSearch();
                 statusLabel.setText("Appointment deleted successfully.");
             }
         } else {
@@ -164,13 +202,28 @@ public class TableViewController implements Initializable {
     @FXML
     private void refreshTable() {
         appointmentTable.refresh();
-        updateStatusLabel();
+        updateStatusLabelWithSearch();
         statusLabel.setText("Table refreshed.");
     }
 
     private void updateStatusLabel() {
         int totalAppointments = appointmentManager.getAppointments().size();
         statusLabel.setText("Total appointments: " + totalAppointments);
+    }
+
+    /**
+     * Updates the status label to show filtered search results.
+     * Displays both filtered count and total count when search is active.
+     */
+    private void updateStatusLabelWithSearch() {
+        int filteredCount = filteredAppointments.size();
+        int totalCount = appointmentManager.getAppointments().size();
+        
+        if (searchField.getText() == null || searchField.getText().trim().isEmpty()) {
+            statusLabel.setText("Total appointments: " + totalCount);
+        } else {
+            statusLabel.setText("Showing " + filteredCount + " of " + totalCount + " appointments");
+        }
     }
 
     private void showAlert(String title, String message) {
@@ -245,7 +298,7 @@ public class TableViewController implements Initializable {
         if (file != null) {
             String filePath = file.getAbsolutePath();
             if (appointmentManager.loadFromFile(filePath)) {
-                updateStatusLabel();
+                updateStatusLabelWithSearch();
                 statusLabel.setText("Appointments loaded from: " + file.getName());
             } else {
                 showAlert("Load Error", "Failed to load appointments from file.");
@@ -279,7 +332,7 @@ public class TableViewController implements Initializable {
         if (file != null) {
             String filePath = file.getAbsolutePath();
             if (appointmentManager.createNewFile(filePath)) {
-                updateStatusLabel();
+                updateStatusLabelWithSearch();
                 statusLabel.setText("New appointment file created: " + file.getName());
             } else {
                 showAlert("Creation Error", "Failed to create new appointment file.");
