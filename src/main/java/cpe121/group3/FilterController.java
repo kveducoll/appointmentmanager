@@ -69,6 +69,52 @@ public class FilterController implements Initializable {
 
     public void setTableViewController(TableViewController tableViewController) {
         this.tableViewController = tableViewController;
+        
+        // Populate UI with current filter values
+        if (tableViewController != null) {
+            populateCurrentFilters();
+        }
+    }
+
+    //Populate UI withcurrent filter values
+    private void populateCurrentFilters() {
+        FilterCriteria currentCriteria = tableViewController.getCurrentFilterCriteria();
+        if (currentCriteria == null) {
+            return;
+        }
+        
+        // Title filter
+        titleFilterEnabled.setSelected(currentCriteria.isTitleFilterEnabled());
+        if (currentCriteria.getTitleFilter() != null) {
+            titleFilterField.setText(currentCriteria.getTitleFilter());
+        }
+        
+        // Participant filter
+        participantFilterEnabled.setSelected(currentCriteria.isParticipantFilterEnabled());
+        if (currentCriteria.getParticipantFilter() != null) {
+            participantFilterField.setText(currentCriteria.getParticipantFilter());
+        }
+        
+        // Date range filter
+        dateRangeFilterEnabled.setSelected(currentCriteria.isDateRangeFilterEnabled());
+        fromDatePicker.setValue(currentCriteria.getFromDate());
+        toDatePicker.setValue(currentCriteria.getToDate());
+        
+        // Status filter
+        statusFilterEnabled.setSelected(currentCriteria.isStatusFilterEnabled());
+        if (currentCriteria.getStatusFilter() != null) {
+            statusFilterComboBox.setValue(currentCriteria.getStatusFilter());
+        }
+        
+        // Description filter
+        descriptionFilterEnabled.setSelected(currentCriteria.isDescriptionFilterEnabled());
+        if (currentCriteria.getDescriptionFilter() != null) {
+            descriptionFilterField.setText(currentCriteria.getDescriptionFilter());
+        }
+        
+        // Options
+        caseSensitiveCheckBox.setSelected(currentCriteria.isCaseSensitive());
+        exactMatchCheckBox.setSelected(currentCriteria.isExactMatch());
     }
 
     @FXML
@@ -88,9 +134,7 @@ public class FilterController implements Initializable {
         closeFilter();
     }
 
-    /**
-     * Creates FilterCriteria object from current UI state
-     */
+    
     private FilterCriteria createFilterCriteria() {
         FilterCriteria criteria = new FilterCriteria();
         
