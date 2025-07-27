@@ -1,5 +1,9 @@
 package cpe121.group3;
 
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +38,8 @@ import javafx.collections.transformation.FilteredList;
 
 public class TableViewController implements Initializable {
 
+    @FXML private MenuBar menuBar;
+
     @FXML private TableView<Appointment> appointmentTable;
     @FXML private TableColumn<Appointment, String> titleColumn;
     @FXML private TableColumn<Appointment, String> participantColumn;
@@ -57,10 +63,10 @@ public class TableViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         appointmentManager = AppointmentManager.getInstance();
-        
+
         // Initialize filter criteria
         currentFilterCriteria = new FilterCriteria();
-        
+
         // Set up table columns
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         participantColumn.setCellValueFactory(new PropertyValueFactory<>("participant"));
@@ -73,8 +79,32 @@ public class TableViewController implements Initializable {
         filteredAppointments = new FilteredList<>(appointmentManager.getAppointments(), p -> true);
         appointmentTable.setItems(filteredAppointments);
         setupSearchFunctionality();
-        
+
         updateStatusLabel();
+
+        // Setup Help > About menu
+        if (menuBar != null) {
+            Menu helpMenu = null;
+            for (Menu menu : menuBar.getMenus()) {
+                if (menu.getText().equalsIgnoreCase("Help")) {
+                    helpMenu = menu;
+                    break;
+                }
+            }
+            if (helpMenu == null) {
+                helpMenu = new Menu("Help");
+                menuBar.getMenus().add(helpMenu);
+            }
+            MenuItem aboutItem = new MenuItem("About");
+            aboutItem.setOnAction(e -> {
+                try {
+                    showAboutPopup();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+            helpMenu.getItems().add(aboutItem);
+        }
     }
 
     // Setup search bar 
