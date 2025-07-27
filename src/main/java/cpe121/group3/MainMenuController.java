@@ -2,7 +2,9 @@ package cpe121.group3;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.input.MouseEvent;
@@ -14,6 +16,8 @@ import java.io.IOException;
 import java.io.File;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
+
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -94,16 +98,27 @@ public class MainMenuController {
             if (!files.isEmpty()) {
                 File file = files.get(0);
                 if (file.getName().toLowerCase().endsWith(".apf")) {
-                    // Load the appointment file
-                    loadAppointmentFile(file);
-                    success = true;
+                    AppointmentManager manager = AppointmentManager.getInstance();
+                    if (manager.hasUnsavedChanges()) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Unsaved Changes");
+                        alert.setHeaderText("You have unsaved changes.");
+                        alert.setContentText("Do you want to continue and lose unsaved changes?");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isPresent() && result.get() != ButtonType.OK) {
+                            event.setDropCompleted(false);
+                            event.consume();
+                            resetDropAreaAppearance();
+                            return;
+                        }
+                    }
+                    success = loadAppointmentFileWithDialog(file);
                 }
             }
         }
 
         event.setDropCompleted(success);
         event.consume();
-        
         // Reset the drop area appearance
         resetDropAreaAppearance();
     }
@@ -137,20 +152,30 @@ public class MainMenuController {
         dropLabel.setTextFill(javafx.scene.paint.Color.web("#686868"));
     }
 
-    private void loadAppointmentFile(File file) {
+    private boolean loadAppointmentFileWithDialog(File file) {
         AppointmentManager appointmentManager = AppointmentManager.getInstance();
         if (appointmentManager.loadFromFile(file.getAbsolutePath())) {
             try {
                 // Navigate to the table view after successful load
                 App.setRoot("tableview");
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
-                System.err.println("Failed to load tableview.fxml");
+                showErrorDialog("Failed to load tableview.fxml");
+                return false;
             }
         } else {
-            System.err.println("Failed to load appointments from file: " + file.getName());
-            // You could show an error dialog here
+            showErrorDialog("Failed to load appointments from file: " + file.getName());
+            return false;
         }
+    }
+
+    private void showErrorDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("File Load Error");
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -167,7 +192,30 @@ public class MainMenuController {
     }
 
     @FXML
-    private void handleNewButton() {
+    private void handleCreateNewButton() {
+        AppointmentManager manager = AppointmentManager.getInstance();
+
+        if (manager.hasUnsavedChanges()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Unsaved Changes");
+            alert.setHeaderText("You have unsaved changes.");
+            alert.setContentText("Do you want to continue and lose unsaved changes?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+        manager.clearAllAppointments(); // or manager.clearAllAppointments() if that's the correct method
+        try {
+            App.setRoot("tableview");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println(e);
+        }
+}
+
+    @FXML
+    private void handleOpenButton() {
         try {
             // Navigate to the table view
             App.setRoot("tableview");
@@ -187,7 +235,18 @@ public class MainMenuController {
 
         File file = fileChooser.showOpenDialog(App.getPrimaryStage());
         if (file != null) {
-            loadAppointmentFile(file);
+            AppointmentManager manager = AppointmentManager.getInstance();
+            if (manager.hasUnsavedChanges()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Unsaved Changes");
+                alert.setHeaderText("You have unsaved changes.");
+                alert.setContentText("Do you want to continue and lose unsaved changes?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() != ButtonType.OK) {
+                    return;
+                }
+            }
+            loadAppointmentFileWithDialog(file);
         }
     }
 

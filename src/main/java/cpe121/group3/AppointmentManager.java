@@ -15,6 +15,8 @@ public class AppointmentManager {
     private DatabaseManager databaseManager;
     private String currentFilePath;
 
+    private boolean unsaved = false;
+
     private AppointmentManager() {
         appointments = FXCollections.observableArrayList();
         databaseManager = new DatabaseManager();
@@ -33,6 +35,7 @@ public class AppointmentManager {
 
     public void addAppointment(Appointment appointment) {
         appointments.add(appointment);
+        unsaved = true;
         
         // Save to database if connected
         if (databaseManager.isConnected()) {
@@ -46,6 +49,7 @@ public class AppointmentManager {
         if (index >= 0 && index < appointments.size()) {
             Appointment oldAppointment = appointments.get(index);
             appointments.set(index, appointment);
+            unsaved = true;
             
             // Update in database if connected
             if (databaseManager.isConnected()) {
@@ -58,7 +62,8 @@ public class AppointmentManager {
 
     public void deleteAppointment(Appointment appointment) {
         appointments.remove(appointment);
-        
+        unsaved = true;
+
         // Delete from database if connected
         if (databaseManager.isConnected()) {
             if (!databaseManager.deleteAppointment(appointment)) {
@@ -80,6 +85,7 @@ public class AppointmentManager {
 
     public void clearAllAppointments() {
         appointments.clear();
+        unsaved = false;
         
         // Clear database if connected
         if (databaseManager.isConnected()) {
@@ -91,6 +97,7 @@ public class AppointmentManager {
 
     // Save appointments to a new .apf file
     public boolean saveToFile(String filePath) {
+        boolean result = false;
         try {
             // Ensure .apf extension
             if (!filePath.toLowerCase().endsWith(".apf")) {
@@ -108,17 +115,18 @@ public class AppointmentManager {
                         return false;
                     }
                 }
-                return true;
+                result = true;
             }
-            return false;
         } catch (Exception e) {
             System.err.println("Error saving to file: " + e.getMessage());
-            return false;
         }
+        if (result) unsaved = false;
+        return result;
     }
 
     //Load appointments from an existing .apf file
     public boolean loadFromFile(String filePath) {
+        boolean result = false;
         try {
             // Ensure .apf extension
             if (!filePath.toLowerCase().endsWith(".apf")) {
@@ -136,23 +144,34 @@ public class AppointmentManager {
                 appointments.clear();
                 appointments.addAll(loadedAppointments);
                 
-                return true;
+                result = true;
             }
-            return false;
         } catch (Exception e) {
             System.err.println("Error loading from file: " + e.getMessage());
-            return false;
         }
+        if (result) unsaved = false;
+        return result;
+    }
+
+    public boolean hasUnsavedChanges() {
+        return unsaved;
     }
 
     //Save current appointments to the currently open file 
     public boolean save() {
+        boolean result = false;
         if (currentFilePath != null && databaseManager.isConnected()) {
-            // Current implementation already saves automatically when adding/updating/deleting
-            // This method can be used for explicit saves if needed
-            return true;
+            // Save all current appointments to the database
+            for (Appointment appointment : appointments) {
+                if (!databaseManager.saveAppointment(appointment)) {
+                    System.err.println("Failed to save appointment: " + appointment.getTitle());
+                    return false;
+                }
+            }
+            result = true;
         }
-        return false;
+        if (result) unsaved = false;
+        return result;
     }
 
     // Create new appointment file

@@ -54,7 +54,7 @@
    <left>
       <VBox prefHeight="540.0" prefWidth="214.0" style="-fx-background-color: #202020;" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #09ab72; -fx-background-radius: 10;" text="Create new" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#handleCreateNewButton" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #09ab72; -fx-background-radius: 10;" text="Create new" textFill="WHITE">
                <VBox.margin>
                   <Insets left="20.0" top="20.0" />
                </VBox.margin>
@@ -76,7 +76,7 @@
                   <Insets left="10.0" right="60.0" />
                </VBox.margin>
             </Separator>
-            <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleNewButton" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: null; -fx-background-radius: 10; -fx-background-color: wjhite;" text="Open table" textFill="WHITE">
+            <Button fx:id="newButton" mnemonicParsing="false" onAction="#handleOpenButton" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: null; -fx-background-radius: 10; -fx-background-color: wjhite;" text="Open table" textFill="WHITE">
                <VBox.margin>
                   <Insets left="20.0" top="30.0" />
                </VBox.margin>
