@@ -107,6 +107,74 @@ public class TableViewController implements Initializable {
         }
     }
 
+    // Implement the edit menu bar
+    @FXML
+    private void cutSelectedAppointment() {
+        copySelectedAppointment();
+        deleteSelectedAppointment();
+    }
+
+    @FXML
+    private void copySelectedAppointment() {
+        Appointment selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
+        if (selectedAppointment != null) {
+            javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
+            javafx.scene.input.ClipboardContent content = new javafx.scene.input.ClipboardContent();
+            // Serialize appointment fields as key=value pairs
+            StringBuilder sb = new StringBuilder();
+            sb.append("title=").append(selectedAppointment.getTitle() == null ? "" : selectedAppointment.getTitle()).append("\n");
+            sb.append("participant=").append(selectedAppointment.getParticipant() == null ? "" : selectedAppointment.getParticipant()).append("\n");
+            sb.append("appointmentDate=").append(selectedAppointment.getAppointmentDate() == null ? "" : selectedAppointment.getAppointmentDate()).append("\n");
+            sb.append("appointmentTime=").append(selectedAppointment.getAppointmentTime() == null ? "" : selectedAppointment.getAppointmentTime()).append("\n");
+            sb.append("description=").append(selectedAppointment.getDescription() == null ? "" : selectedAppointment.getDescription()).append("\n");
+            sb.append("status=").append(selectedAppointment.getStatus() == null ? "" : selectedAppointment.getStatus());
+            content.putString(sb.toString());
+            clipboard.setContent(content);
+            statusLabel.setText("Appointment copied to clipboard.");
+        } else {
+            showAlert("No Selection", "Please select an appointment to copy.");
+        }
+    }
+
+    @FXML
+    private void pasteAppointment() {
+        javafx.scene.input.Clipboard clipboard = javafx.scene.input.Clipboard.getSystemClipboard();
+        if (clipboard.hasString()) {
+            String data = clipboard.getString();
+            // Parse the clipboard string into an Appointment object
+            String[] lines = data.split("\n");
+            String title = "", participant = "", appointmentDate = "", appointmentTime = "", description = "", status = "";
+            for (String line : lines) {
+                String[] parts = line.split("=", 2);
+                if (parts.length < 2) continue;
+                switch (parts[0]) {
+                    case "title": title = parts[1]; break;
+                    case "participant": participant = parts[1]; break;
+                    case "appointmentDate": appointmentDate = parts[1]; break;
+                    case "appointmentTime": appointmentTime = parts[1]; break;
+                    case "description": description = parts[1]; break;
+                    case "status": status = parts[1]; break;
+                }
+            }
+            // Basic validation: require title and date
+            if (title.isEmpty() || appointmentDate.isEmpty()) {
+                showAlert("Paste Error", "Clipboard data is missing required fields (title or date).");
+                return;
+            }
+            Appointment newAppointment = new Appointment(title, participant, appointmentDate, appointmentTime, description, status);
+            appointmentManager.addAppointment(newAppointment);
+            refreshTable();
+            statusLabel.setText("Appointment pasted from clipboard.");
+        } else {
+            showAlert("Paste", "Clipboard is empty or does not contain appointment data.");
+        }
+    }
+
+    @FXML
+    private void deleteSelectedAppointmentMenu() {
+        deleteSelectedAppointment();
+    }
+
     // Setup search bar 
     private void setupSearchFunctionality() {
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {

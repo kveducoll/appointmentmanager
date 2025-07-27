@@ -43,10 +43,10 @@
                       </Menu>
                       <Menu mnemonicParsing="false" text="Edit">
                         <items>
-                          <MenuItem mnemonicParsing="false" text="Cut" />
-                          <MenuItem mnemonicParsing="false" text="Copy" />
-                          <MenuItem mnemonicParsing="false" text="Paste" />
-                          <MenuItem mnemonicParsing="false" text="Delete" />
+                          <MenuItem mnemonicParsing="false" onAction="#cutSelectedAppointment" text="Cut" />
+                          <MenuItem mnemonicParsing="false" onAction="#copySelectedAppointment" text="Copy" />
+                          <MenuItem mnemonicParsing="false" onAction="#pasteAppointment" text="Paste" />
+                          <MenuItem mnemonicParsing="false" onAction="#deleteSelectedAppointmentMenu" text="Delete" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="Help">
