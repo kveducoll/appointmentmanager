@@ -86,13 +86,9 @@ public class AppointmentManager {
     public void clearAllAppointments() {
         appointments.clear();
         unsaved = false;
-        
-        // Clear database if connected
-        if (databaseManager.isConnected()) {
-            if (!databaseManager.clearAllAppointments()) {
-                System.err.println("Failed to clear appointments from database");
-            }
-        }
+        currentFilePath = null;
+        // Close database to forget everything
+        databaseManager.closeConnection();
     }
 
     // Save appointments to a new .apf file
@@ -169,9 +165,26 @@ public class AppointmentManager {
                 }
             }
             result = true;
+        } else {
+            // Prompt for location if no file is open
+            result = saveAs();
         }
         if (result) unsaved = false;
         return result;
+    }
+
+    // Save As prompt for location and save
+    public boolean saveAs() {
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Save Appointments As");
+        fileChooser.getExtensionFilters().add(
+            new javafx.stage.FileChooser.ExtensionFilter("Appointment Files", "*.apf")
+        );
+        java.io.File file = fileChooser.showSaveDialog(App.getPrimaryStage());
+        if (file != null) {
+            return saveToFile(file.getAbsolutePath());
+        }
+        return false;
     }
 
     // Create new appointment file
