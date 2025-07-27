@@ -5,7 +5,7 @@ Button {
 }
 
 Button:hover {
-    -fx-background-color: #555555 !important;
+    -fx-background-color: #353535 !important;
 }
 
 Button:pressed {
