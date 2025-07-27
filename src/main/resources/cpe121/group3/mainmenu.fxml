@@ -81,7 +81,7 @@
                   <Insets left="20.0" top="30.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: null; -fx-background-radius: 10;" text="About" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#showAboutPopup" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: null; -fx-background-radius: 10;" text="About" textFill="WHITE">
                <VBox.margin>
                   <Insets left="20.0" top="30.0" />
                </VBox.margin>

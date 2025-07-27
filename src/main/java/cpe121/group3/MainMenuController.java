@@ -256,6 +256,21 @@ public class MainMenuController {
         Platform.exit();
     }
 
+    @FXML
+    private void showAboutPopup() throws IOException {
+        javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("about.fxml"));
+        javafx.scene.Parent root = loader.load();
+        javafx.stage.Stage popupStage = new javafx.stage.Stage();
+        popupStage.initStyle(javafx.stage.StageStyle.UNDECORATED);
+        popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+        popupStage.initOwner(App.getPrimaryStage());
+        javafx.scene.Scene scene = new javafx.scene.Scene(root, 604, 612);
+        popupStage.setScene(scene);
+        popupStage.setTitle("About");
+        popupStage.setResizable(false);
+        popupStage.showAndWait();
+    }
+
     // Window control methods
     @FXML
     private void onTitleBarPressed(MouseEvent event) {
