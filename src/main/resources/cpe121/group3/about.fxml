@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="612.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <Button mnemonicParsing="false" onAction="#closeAbout" prefHeight="612.0" prefWidth="615.0" style="-fx-background-color: #202020;" text="Button" BorderPane.alignment="CENTER">
+         <graphic>
+            <AnchorPane prefHeight="638.0" prefWidth="613.0" style="-fx-background-color: #202020;">
+               <children>
+                  <ImageView fitHeight="61.0" fitWidth="61.0" layoutX="12.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@assets/Appointment-Manager-Logo.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="83.0" layoutY="40.0" text="Appointment Manager" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="17.0" layoutY="175.0" text="Copyright (c) 2025 karlwizkrafte" textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="192.0" text="Permission is hereby granted, free of charge, to any person obtaining a copy" textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="209.0" text="of this software and associated documentation files (the &quot;Software&quot;), to deal" textFill="WHITE" />
+                  <Label layoutX="16.0" layoutY="226.0" text="in the Software without restriction, including without limitation the rights" textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="243.0" text="to use, copy, modify, merge, publish, distribute, sublicense, and/or sell" textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="260.0" text="copies of the Software, and to permit persons to whom the Software is" textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="277.0" text="furnished to do so, subject to the following conditions:" textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="314.0" text="The above copyright notice and this permission notice shall be included in all" textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="331.0" text="copies or substantial portions of the Software." textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="368.0" text="THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR" textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="385.0" text="IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY," textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="402.0" text="FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE" textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="419.0" text="AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER" textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="436.0" text="LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM," textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="453.0" text="OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE" textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="470.0" text="SOFTWARE." textFill="WHITE" />
+                  <Label layoutX="17.0" layoutY="148.0" text="MIT License" textFill="WHITE" />
+                  <Label layoutX="18.0" layoutY="109.0" text="1.1-Snapshot (This is for Educational Purposes - Not for Production Use)" textFill="WHITE" />
+                  <ImageView fitHeight="29.0" fitWidth="124.0" layoutX="282.0" layoutY="579.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@assets/G3-CPE121-Logo.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="25.0" fitWidth="148.0" layoutX="419.0" layoutY="583.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@assets/Kaviyes-logo.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+         </graphic>
+      </Button>
+   </center>
+</BorderPane>
