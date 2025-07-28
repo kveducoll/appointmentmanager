@@ -135,7 +135,7 @@ public class MainMenuController {
                 // Invalid file type
                 dropArea.setStyle("-fx-background-color: #4d2a2a; -fx-background-radius: 5; -fx-border-color: #ab0909; -fx-border-width: 2px; -fx-border-radius: 5;");
                 dropLabel.setText("Only .apf files allowed");
-                dropLabel.setTextFill(javafx.scene.paint.Color.web("#ab0909"));
+                dropLabel.setTextFill(javafx.scene.paint.Color.web("#fdfdfdff"));
             }
         }
         event.consume();
