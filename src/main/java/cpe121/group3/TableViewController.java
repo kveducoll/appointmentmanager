@@ -1,9 +1,5 @@
 package cpe121.group3;
 
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +20,6 @@ import javafx.print.PrinterJob;
 import javafx.print.PageLayout;
 import javafx.print.Printer;
 import javafx.print.PageOrientation;
-import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -348,6 +343,29 @@ public class TableViewController implements Initializable {
         popupStage.setResizable(false);
         popupStage.showAndWait();
     }
+
+    @FXML
+    private void createNewFile() throws IOException {
+        AppointmentManager manager = AppointmentManager.getInstance();
+
+        if (manager.hasUnsavedChanges()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Unsaved Changes");
+            alert.setHeaderText("You have unsaved changes.");
+            alert.setContentText("Do you want to continue and lose unsaved changes?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+        manager.clearAllAppointments(); // or manager.clearAllAppointments() if that's the correct method
+        try {
+            App.setRoot("tableview");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println(e);
+        }
+}
 
     @FXML
     private void showAddAppointment() throws IOException {
