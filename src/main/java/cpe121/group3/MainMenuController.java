@@ -447,6 +447,13 @@ public class MainMenuController {
     }
 
     @FXML
+    private void onTitleBarClicked(MouseEvent event) {
+        if (event.getClickCount() == 2) {
+            maximizeWindow();
+        }
+    }
+
+    @FXML
     private void minimizeWindow() {
         Stage stage = (Stage) titleBar.getScene().getWindow();
         stage.setIconified(true);
