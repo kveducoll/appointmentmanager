@@ -21,13 +21,16 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         primaryStage = stage;
-        scene = new Scene(loadFXML("mainmenu"), 1200, 600);
+        scene = new Scene(loadFXML("mainmenu"), 1000, 600);
         stage.setTitle("Appointment Manager");
 
         Image icon = new Image(getClass().getResourceAsStream("/cpe121/group3/assets/Appointment-Manager-Logo.png"));
         stage.getIcons().add(icon);
         
         stage.initStyle(StageStyle.UNDECORATED); // disable native title bar
+        stage.setResizable(true);
+        stage.setMinWidth(800); // Minimum window width
+        stage.setMinHeight(400); // Minimum window height
         stage.setScene(scene);
         stage.show();
     }
