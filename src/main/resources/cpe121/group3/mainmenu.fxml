@@ -16,7 +16,7 @@
    <top>
       <VBox prefHeight="60.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="titleBar" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" style="-fx-background-color: #151515;">
+            <HBox fx:id="titleBar" onMouseClicked="#onTitleBarClicked" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" style="-fx-background-color: #151515;">
                <children>
                   <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                      <image>
