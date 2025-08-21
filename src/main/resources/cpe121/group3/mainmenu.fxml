@@ -107,8 +107,29 @@
          <center>
             <BorderPane fx:id="dropArea" prefHeight="330.0" prefWidth="666.0" style="-fx-background-color: #252525; -fx-background-radius: 5;" BorderPane.alignment="CENTER">
                <center>
-                  <Label fx:id="dropLabel" text="Drop and drop .apf files here" textAlignment="CENTER" textFill="#6b6b6b" BorderPane.alignment="CENTER" />
+                  <Label fx:id="dropLabel" text="Drag and drop .apf files here" textAlignment="CENTER" textFill="#6b6b6b" BorderPane.alignment="CENTER" />
                </center>
+               <top>
+                  <VBox fx:id="recentFilesContainer" alignment="TOP_LEFT" maxHeight="200.0" prefWidth="666.0" spacing="5.0" style="-fx-background-color: transparent;" visible="false" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Recent Files" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button fx:id="clearRecentButton" onAction="#clearRecentFiles" style="-fx-background-color: transparent; -fx-text-fill: #6b6b6b; -fx-border-color: transparent; -fx-font-size: 10px;" text="Clear" />
+                           </children>
+                        </HBox>
+                        <VBox fx:id="recentFilesList" spacing="3.0" />
+                     </children>
+                  </VBox>
+               </top>
             </BorderPane>
          </center>
          <top>
