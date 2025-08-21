@@ -17,12 +17,12 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.TableViewController" stylesheets="@style/tableviewButtonStyle.css">
+<BorderPane stylesheets="@style/tableviewButtonStyle.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.TableViewController">
    <top>
       <VBox spacing="0.0">
          <children>
             <!-- Custom Title Bar -->
-            <HBox fx:id="titleBar" alignment="CENTER" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="47.0" prefWidth="1017.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
+            <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="47.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
                <children>
                   <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -33,7 +33,7 @@
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
                         <items>
-                          <MenuItem mnemonicParsing="false" onAction="#createNewFile" text="Create new file"/>
+                          <MenuItem mnemonicParsing="false" onAction="#createNewFile" text="Create new file" />
                           <MenuItem mnemonicParsing="false" onAction="#showAddAppointment" text="New Appointment" />
                           <MenuItem mnemonicParsing="false" onAction="#loadAppointments" text="Open..." />
                           <MenuItem mnemonicParsing="false" onAction="#saveAppointments" text="Save" />
@@ -57,10 +57,10 @@
                       </Menu>
                     </menus>
                   </MenuBar>
-                  <Region prefHeight="40.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
+                  <Region prefHeight="40.0" prefWidth="10.0" />
                   <Button mnemonicParsing="false" onAction="#goToMainMenu" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #363636; -fx-border-color: white; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
                      <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@iconpack/home.png" />
                            </image>
@@ -68,11 +68,12 @@
                      </graphic>
                   </Button>
                   <Region prefHeight="40.0" prefWidth="10.0" />
-                  <TextField fx:id="searchField" prefHeight="30.0" prefWidth="392.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;">
+                  <TextField fx:id="searchField" maxWidth="250.0" minWidth="120.0" prefHeight="30.0" prefWidth="200.0" promptText="🔎  Search" style="-fx-background-color: #303030; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc; -fx-border-color: white; -fx-border-width: 1px; -fx-border-radius: 3px; -fx-background-radius: 3px;">
                      <padding>
                         <Insets left="10.0" />
-                     </padding></TextField>
-                  <Region prefHeight="48.0" prefWidth="90.0" HBox.hgrow="ALWAYS" />
+                     </padding>
+                  </TextField>
+                  <Region HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER_RIGHT" spacing="0.0">
                      <children>
                         <Button fx:id="minimizeButton" onAction="#minimizeWindow" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: transparent; -fx-font-size: 12px; -fx-padding: 5px 10px;" text="–" />
@@ -87,133 +88,154 @@
                <children>
                   <BorderPane prefHeight="83.0" prefWidth="812.0">
                      <left>
-                        <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="728.0" spacing="10.0" style="-fx-background-color: #282828; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
+                        <HBox alignment="CENTER_LEFT" prefHeight="65.0" prefWidth="387.0" spacing="10.0" style="-fx-background-color: #282828; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
                            <children>
                               <Button fx:id="addAppointmentButton" onAction="#showAddAppointment" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
                                  <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@iconpack/plus.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Button>
-                              <Button fx:id="editAppointmentButton" onAction="#editSelectedAppointment" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="Update" textFill="WHITE">
+                              <Button fx:id="editButton" onAction="#editSelectedAppointment" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
                                  <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@iconpack/pencil.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Button>
-                              <Button fx:id="setStatusButton" mnemonicParsing="false" onAction="#updateSelectedAppointmentStatus" prefHeight="35.0" prefWidth="120.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="Set Status" textFill="WHITE">
+                              <Button fx:id="statusButton" onAction="#updateSelectedAppointmentStatus" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
                                  <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@iconpack/memo.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Button>
-                              <Button fx:id="filterButton" layoutX="176.0" layoutY="20.0" mnemonicParsing="false" onAction="#openFilterPopup" prefHeight="35.0" prefWidth="120.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" text="Filter" textFill="WHITE">
+                              <Button fx:id="deleteButton" onAction="#deleteSelectedAppointment" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
                                  <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@iconpack/funnel.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="refreshButton" onAction="#refreshTable" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="Refresh" textFill="WHITE">
-                                 <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@iconpack/refresh.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="deleteAppointmentButton" onAction="#deleteSelectedAppointment" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" text="Delete" textFill="WHITE">
-                                 <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="24.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@iconpack/trash.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Button>
-                           </children>
-                           <padding>
-                              <Insets left="10.0" right="10.0" />
-                           </padding>
-                        </HBox>
-                     </left>
-                     <padding>
-                        <Insets bottom="10.0" />
-                     </padding>
-                     <right>
-                        <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" prefHeight="55.0" prefWidth="436.0" spacing="5.0" style="-fx-background-color: #151515; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <children>
-                              <Button contentDisplay="LEFT" mnemonicParsing="false" onAction="#saveAppointments" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
+                              <Button fx:id="filterButton" onAction="#openFilterPopup" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
                                  <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@iconpack/floppy.png" />
+                                          <Image url="@iconpack/funnel.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
-                                 <HBox.margin>
-                                    <Insets right="5.0" />
-                                 </HBox.margin>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Button>
-                              <Button fx:id="printButton" contentDisplay="LEFT" mnemonicParsing="false" onAction="#printAppointments" prefHeight="35.0" prefWidth="50.0" style="-fx-border-color: #FFFFFF; -fx-background-color: #363636; -fx-background-radius: 5; -fx-border-radius: 5;" textFill="WHITE">
+                              <Button fx:id="refreshButton" onAction="#refreshTable" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
                                  <graphic>
-                                    <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@iconpack/refresh.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" />
+                           </BorderPane.margin>
+                        </HBox>
+                     </left>
+                     <right>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="65.0" prefWidth="150.0" spacing="10.0" style="-fx-background-color: #282828; -fx-background-radius: 10;" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button onAction="#saveAppointments" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@iconpack/paper.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Button fx:id="printButton" onAction="#printAppointments" prefHeight="35.0" prefWidth="50.0" style="-fx-background-color: #363636; -fx-border-color: #FFFFFF; -fx-border-radius: 5; -fx-background-radius: 5;" textFill="WHITE">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@iconpack/printer.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </Button>
                            </children>
+                           <padding>
+                              <Insets right="20.0" />
+                           </padding>
+                           <BorderPane.margin>
+                              <Insets bottom="10.0" />
+                           </BorderPane.margin>
                         </HBox>
                      </right>
                   </BorderPane>
                </children>
                <padding>
-                  <Insets left="10.0" right="10.0" top="10.0" />
+                  <Insets left="20.0" right="20.0" top="10.0" />
                </padding>
             </VBox>
          </children>
       </VBox>
    </top>
-   <center>
-      <TableView fx:id="appointmentTable">
-         <columns>
-            <TableColumn fx:id="titleColumn" editable="false" prefWidth="200.0" text="Title" />
-            <TableColumn fx:id="participantColumn" prefWidth="150.0" text="Participant" />
-            <TableColumn fx:id="appointmentDateColumn" prefWidth="100.0" text="Date" />
-            <TableColumn fx:id="appointmentTimeColumn" prefWidth="80.0" text="Time" />
-            <TableColumn fx:id="descriptionColumn" prefWidth="200.0" text="Description" />
-            <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
-         </columns>
-         <cursor>
-            <Cursor fx:constant="CROSSHAIR" />
-         </cursor>
-      </TableView>
-   </center>
    <bottom>
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="812.0" style="-fx-background-color: #151515;" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="statusLabel" text="Ready" />
+            <Label fx:id="statusLabel" text="Total appointments: 0" textFill="WHITE" />
          </children>
          <padding>
-            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            <Insets left="30.0" />
          </padding>
       </HBox>
    </bottom>
+   <center>
+      <TableView fx:id="appointmentTable" prefHeight="391.0" prefWidth="772.0" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="titleColumn" prefWidth="112.79999017715454" text="Title" />
+          <TableColumn fx:id="participantColumn" prefWidth="128.0" text="Participant" />
+            <TableColumn fx:id="appointmentDateColumn" prefWidth="99.99998474121094" text="Date" />
+            <TableColumn fx:id="appointmentTimeColumn" prefWidth="102.39999389648438" text="Time" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="176.79999084472656" text="Description" />
+            <TableColumn fx:id="statusColumn" prefWidth="91.99998474121094" text="Status" />
+        </columns>
+      </TableView>
+   </center>
 </BorderPane>
