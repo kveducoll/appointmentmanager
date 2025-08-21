@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -27,6 +28,9 @@ public class MainMenuController {
     @FXML private Label greetLabel;
     @FXML private Label dropLabel;
     @FXML private BorderPane dropArea;
+    @FXML private VBox recentFilesContainer;
+    @FXML private VBox recentFilesList;
+    @FXML private Button clearRecentButton;
 
     @FXML
     private Button newButton;
@@ -62,6 +66,7 @@ public class MainMenuController {
 
         setupWindowDragging();
         setupDragAndDrop();
+        loadRecentFiles();
     }
 
     private void setupWindowDragging() {
@@ -300,5 +305,65 @@ public class MainMenuController {
     @FXML
     private void closeWindow() {
         Platform.exit();
+    }
+
+    private void loadRecentFiles() {
+        AppointmentManager manager = AppointmentManager.getInstance();
+        List<String> recentFiles = manager.getRecentFiles();
+        
+        recentFilesList.getChildren().clear();
+        
+        if (recentFiles.isEmpty()) {
+            recentFilesContainer.setVisible(false);
+            return;
+        }
+        
+        recentFilesContainer.setVisible(true);
+        
+        for (String filePath : recentFiles) {
+            File file = new File(filePath);
+            
+            Button fileButton = new Button(file.getName());
+            fileButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #09ab72; -fx-border-color: transparent; -fx-alignment: CENTER_LEFT; -fx-font-size: 12px; -fx-padding: 5px 10px;");
+            fileButton.setMaxWidth(Double.MAX_VALUE);
+            
+            // Set tooltip with full path
+            javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(filePath);
+            fileButton.setTooltip(tooltip);
+            
+            // Add hover effects
+            fileButton.setOnMouseEntered(e -> fileButton.setStyle("-fx-background-color: #2a4d3a; -fx-text-fill: #09ab72; -fx-border-color: transparent; -fx-alignment: CENTER_LEFT; -fx-font-size: 12px; -fx-padding: 5px 10px; -fx-background-radius: 3px;"));
+            fileButton.setOnMouseExited(e -> fileButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #09ab72; -fx-border-color: transparent; -fx-alignment: CENTER_LEFT; -fx-font-size: 12px; -fx-padding: 5px 10px;"));
+            
+            // Handle click
+            fileButton.setOnAction(e -> {
+                if (file.exists()) {
+                    AppointmentManager appointmentManager = AppointmentManager.getInstance();
+                    if (appointmentManager.hasUnsavedChanges()) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Unsaved Changes");
+                        alert.setHeaderText("You have unsaved changes.");
+                        alert.setContentText("Do you want to continue and lose unsaved changes?");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isPresent() && result.get() != ButtonType.OK) {
+                            return;
+                        }
+                    }
+                    loadAppointmentFileWithDialog(file);
+                } else {
+                    showErrorDialog("File no longer exists: " + file.getName());
+                    loadRecentFiles(); // Refresh the list
+                }
+            });
+            
+            recentFilesList.getChildren().add(fileButton);
+        }
+    }
+    
+    @FXML
+    private void clearRecentFiles() {
+        AppointmentManager manager = AppointmentManager.getInstance();
+        manager.clearRecentFiles();
+        loadRecentFiles();
     }
 }
