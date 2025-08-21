@@ -5,10 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.Cursor;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
@@ -23,9 +26,10 @@ import java.util.Optional;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 
 public class MainMenuController {
-
     @FXML private Label greetLabel;
     @FXML private Label dropLabel;
     @FXML private BorderPane dropArea;
@@ -486,20 +490,45 @@ public class MainMenuController {
         for (String filePath : recentFiles) {
             File file = new File(filePath);
             
-            Button fileButton = new Button(file.getName());
-            fileButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #09ab72; -fx-border-color: transparent; -fx-alignment: CENTER_LEFT; -fx-font-size: 12px; -fx-padding: 5px 10px;");
-            fileButton.setMaxWidth(Double.MAX_VALUE);
+            // Create main container VBox for each recent file (cleaner without HBox)
+            VBox fileContainer = new VBox();
+            fileContainer.setAlignment(Pos.CENTER_LEFT);
+            fileContainer.setMaxWidth(Double.MAX_VALUE);
+            fileContainer.setPadding(new Insets(8, 15, 8, 15));
+            fileContainer.setSpacing(2);
+            fileContainer.setStyle("-fx-background-color: transparent;");
             
-            // Set tooltip with full path
-            javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(filePath);
-            fileButton.setTooltip(tooltip);
+            // Filename label
+            Label filenameLabel = new Label(file.getName());
+            filenameLabel.setStyle("-fx-text-fill: #09ab72; -fx-font-size: 13px; -fx-font-weight: bold;");
             
-            // Add hover effects
-            fileButton.setOnMouseEntered(e -> fileButton.setStyle("-fx-background-color: #2a4d3a; -fx-text-fill: #09ab72; -fx-border-color: transparent; -fx-alignment: CENTER_LEFT; -fx-font-size: 12px; -fx-padding: 5px 10px; -fx-background-radius: 3px;"));
-            fileButton.setOnMouseExited(e -> fileButton.setStyle("-fx-background-color: transparent; -fx-text-fill: #09ab72; -fx-border-color: transparent; -fx-alignment: CENTER_LEFT; -fx-font-size: 12px; -fx-padding: 5px 10px;"));
+            // Full path label (grey)
+            Label pathLabel = new Label(filePath);
+            pathLabel.setStyle("-fx-text-fill: #888888; -fx-font-size: 10px;");
             
-            // Handle click
-            fileButton.setOnAction(e -> {
+            fileContainer.getChildren().addAll(filenameLabel, pathLabel);
+            
+            // Create context menu for right-click
+            ContextMenu contextMenu = new ContextMenu();
+            contextMenu.setStyle(
+                "-fx-background-color: #2d2d2d; " +
+                "-fx-border-color: #555555; " +
+                "-fx-border-width: 1px; " +
+                "-fx-background-radius: 5px; " +
+                "-fx-border-radius: 5px; " +
+                "-fx-padding: 3px;"
+            );
+            
+            // Open menu item
+            MenuItem openItem = new MenuItem("Open");
+            openItem.setStyle(
+                "-fx-background-color: transparent; " +
+                "-fx-text-fill: white; " +
+                "-fx-padding: 8px 15px; " +
+                "-fx-font-size: 12px; " +
+                "-fx-background-radius: 3px;"
+            );
+            openItem.setOnAction(e -> {
                 if (file.exists()) {
                     AppointmentManager appointmentManager = AppointmentManager.getInstance();
                     if (appointmentManager.hasUnsavedChanges()) {
@@ -519,7 +548,56 @@ public class MainMenuController {
                 }
             });
             
-            recentFilesList.getChildren().add(fileButton);
+            // Remove menu item
+            MenuItem removeItem = new MenuItem("Remove from list");
+            removeItem.setStyle(
+                "-fx-background-color: transparent; " +
+                "-fx-text-fill: white; " +
+                "-fx-padding: 8px 15px; " +
+                "-fx-font-size: 12px; " +
+                "-fx-background-radius: 3px;"
+            );
+            
+            removeItem.setOnAction(e -> {
+                manager.removeFromRecentFiles(filePath);
+                loadRecentFiles(); // Refresh the list
+            });
+            
+            contextMenu.getItems().addAll(openItem, removeItem);
+            
+            // Add hover effects
+            fileContainer.setOnMouseEntered(e -> fileContainer.setStyle("-fx-background-color: #2a4d3a; -fx-background-radius: 5px;"));
+            fileContainer.setOnMouseExited(e -> fileContainer.setStyle("-fx-background-color: transparent;"));
+            
+            // Handle mouse clicks (both left and right)
+            fileContainer.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) { // Left click
+                    if (file.exists()) {
+                        AppointmentManager appointmentManager = AppointmentManager.getInstance();
+                        if (appointmentManager.hasUnsavedChanges()) {
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setTitle("Unsaved Changes");
+                            alert.setHeaderText("You have unsaved changes.");
+                            alert.setContentText("Do you want to continue and lose unsaved changes?");
+                            Optional<ButtonType> result = alert.showAndWait();
+                            if (result.isPresent() && result.get() != ButtonType.OK) {
+                                return;
+                            }
+                        }
+                        loadAppointmentFileWithDialog(file);
+                    } else {
+                        showErrorDialog("File no longer exists: " + file.getName());
+                        loadRecentFiles(); // Refresh the list
+                    }
+                } else if (e.getButton() == MouseButton.SECONDARY) { // Right click
+                    contextMenu.show(fileContainer, e.getScreenX(), e.getScreenY());
+                }
+            });
+            
+            // Add cursor pointer
+            fileContainer.setCursor(Cursor.HAND);
+            
+            recentFilesList.getChildren().add(fileContainer);
         }
     }
     
