@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #151515;" stylesheets="@style/mainmenuButtonStyle.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.MainMenuController">
+<BorderPane minHeight="400.0" minWidth="800.0" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: #151515;" stylesheets="@style/mainmenuButtonStyle.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cpe121.group3.MainMenuController">
    <top>
-      <VBox prefHeight="60.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="60.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="titleBar" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #151515;">
+            <HBox fx:id="titleBar" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="60.0" style="-fx-background-color: #151515;">
                <children>
                   <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -47,12 +47,12 @@
                   <Insets left="10.0" top="10.0" />
                </padding>
             </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #151515;" />
+            <HBox prefHeight="100.0" style="-fx-background-color: #151515;" />
          </children>
       </VBox>
    </top>
    <left>
-      <VBox prefHeight="540.0" prefWidth="214.0" style="-fx-background-color: #202020;" BorderPane.alignment="CENTER">
+      <VBox minWidth="214.0" prefWidth="214.0" style="-fx-background-color: #202020;" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#handleCreateNewButton" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #09ab72; -fx-background-radius: 10;" text="Create new" textFill="WHITE">
                <VBox.margin>
@@ -86,31 +86,43 @@
                   <Insets left="20.0" top="30.0" />
                </VBox.margin>
             </Button>
-            <Region prefHeight="229.0" prefWidth="214.0" />
+            <Region prefHeight="45.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></Region>
          </children>
       </VBox>
    </left>
    <center>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #202020;" BorderPane.alignment="CENTER">
+      <BorderPane style="-fx-background-color: #202020;" BorderPane.alignment="CENTER">
          <left>
-            <Region prefHeight="335.0" prefWidth="55.0" BorderPane.alignment="CENTER" />
+            <Region minWidth="30.0" prefWidth="55.0" BorderPane.alignment="CENTER" />
          </left>
          <right>
-            <Region prefHeight="286.0" prefWidth="55.0" BorderPane.alignment="CENTER">
+            <Region minWidth="30.0" prefWidth="55.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin></Region>
          </right>
          <bottom>
-            <Region prefHeight="57.0" prefWidth="786.0" BorderPane.alignment="CENTER" />
+            <HBox alignment="BOTTOM_RIGHT" minHeight="30.0" prefHeight="57.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label text="◢" textFill="#3a3a3a" style="-fx-font-size: 16px; -fx-padding: 0 5 5 0;">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
          </bottom>
          <center>
-            <BorderPane fx:id="dropArea" prefHeight="330.0" prefWidth="666.0" style="-fx-background-color: #252525; -fx-background-radius: 5;" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="dropArea" style="-fx-background-color: #252525; -fx-background-radius: 5;" BorderPane.alignment="CENTER">
                <center>
                   <Label fx:id="dropLabel" text="Drag and drop .apf files here" textAlignment="CENTER" textFill="#6b6b6b" BorderPane.alignment="CENTER" />
                </center>
                <top>
-                  <VBox fx:id="recentFilesContainer" alignment="TOP_LEFT" maxHeight="200.0" prefWidth="666.0" spacing="5.0" style="-fx-background-color: transparent;" visible="false" BorderPane.alignment="CENTER">
+                  <VBox fx:id="recentFilesContainer" alignment="TOP_LEFT" maxHeight="200.0" spacing="5.0" style="-fx-background-color: transparent;" visible="false" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
                      </BorderPane.margin>
@@ -133,7 +145,7 @@
             </BorderPane>
          </center>
          <top>
-            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="786.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" minHeight="60.0" prefHeight="100.0" BorderPane.alignment="CENTER">
                <children>
                   <Region prefHeight="200.0" prefWidth="200.0">
                      <VBox.margin>
