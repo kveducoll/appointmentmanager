@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.Cursor;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.scene.control.Label;
@@ -48,6 +49,11 @@ public class MainMenuController {
     private double xOffset = 0;
     private double yOffset = 0;
 
+    // Variables for window resizing
+    private boolean isResizing = false;
+    private double resizeMargin = 10; 
+    private String resizeDirection = "";
+
     @FXML
     private void initialize() {
         LocalTime localTime = LocalTime.now();
@@ -66,6 +72,7 @@ public class MainMenuController {
 
         setupWindowDragging();
         setupDragAndDrop();
+        setupWindowResizing();
         loadRecentFiles();
     }
 
@@ -157,6 +164,149 @@ public class MainMenuController {
         dropLabel.setTextFill(javafx.scene.paint.Color.web("#686868"));
     }
 
+    private void setupWindowResizing() {
+        // Wait for scene to be fully loaded
+        Platform.runLater(() -> {
+            if (titleBar.getScene() != null) {
+                titleBar.getScene().getRoot().setOnMouseMoved(this::handleMouseMoved);
+                titleBar.getScene().getRoot().setOnMousePressed(this::handleResizeMousePressed);
+                titleBar.getScene().getRoot().setOnMouseDragged(this::handleResizeMouseDragged);
+                titleBar.getScene().getRoot().setOnMouseReleased(this::handleResizeMouseReleased);
+            }
+        });
+    }
+
+    private void handleMouseMoved(MouseEvent event) {
+        if (isResizing) return;
+        
+        Stage stage = (Stage) titleBar.getScene().getWindow();
+        if (stage.isMaximized()) return;
+        
+        double sceneWidth = titleBar.getScene().getWidth();
+        double sceneHeight = titleBar.getScene().getHeight();
+        double mouseX = event.getSceneX();
+        double mouseY = event.getSceneY();
+        
+        // cursor and resize direction
+        boolean atLeft = mouseX < resizeMargin;
+        boolean atRight = mouseX > sceneWidth - resizeMargin;
+        boolean atTop = mouseY < resizeMargin;
+        boolean atBottom = mouseY > sceneHeight - resizeMargin;
+        
+        if (atLeft && atTop) {
+            titleBar.getScene().setCursor(Cursor.NW_RESIZE);
+            resizeDirection = "NW";
+        } else if (atRight && atTop) {
+            titleBar.getScene().setCursor(Cursor.NE_RESIZE);
+            resizeDirection = "NE";
+        } else if (atLeft && atBottom) {
+            titleBar.getScene().setCursor(Cursor.SW_RESIZE);
+            resizeDirection = "SW";
+        } else if (atRight && atBottom) {
+            titleBar.getScene().setCursor(Cursor.SE_RESIZE);
+            resizeDirection = "SE";
+        } else if (atLeft) {
+            titleBar.getScene().setCursor(Cursor.W_RESIZE);
+            resizeDirection = "W";
+        } else if (atRight) {
+            titleBar.getScene().setCursor(Cursor.E_RESIZE);
+            resizeDirection = "E";
+        } else if (atTop) {
+            titleBar.getScene().setCursor(Cursor.N_RESIZE);
+            resizeDirection = "N";
+        } else if (atBottom) {
+            titleBar.getScene().setCursor(Cursor.S_RESIZE);
+            resizeDirection = "S";
+        } else {
+            titleBar.getScene().setCursor(Cursor.DEFAULT);
+            resizeDirection = "";
+        }
+    }
+
+    private void handleResizeMousePressed(MouseEvent event) {
+        if (!resizeDirection.isEmpty()) {
+            isResizing = true;
+            xOffset = event.getScreenX();
+            yOffset = event.getScreenY();
+        }
+    }
+
+    private void handleResizeMouseDragged(MouseEvent event) {
+        if (!isResizing) return;
+        
+        Stage stage = (Stage) titleBar.getScene().getWindow();
+        if (stage.isMaximized()) return;
+        
+        double deltaX = event.getScreenX() - xOffset;
+        double deltaY = event.getScreenY() - yOffset;
+        
+        double newWidth = stage.getWidth();
+        double newHeight = stage.getHeight();
+        double newX = stage.getX();
+        double newY = stage.getY();
+        
+        switch (resizeDirection) {
+            case "E":
+                newWidth = stage.getWidth() + deltaX;
+                break;
+            case "W":
+                newWidth = stage.getWidth() - deltaX;
+                newX = stage.getX() + deltaX;
+                break;
+            case "S":
+                newHeight = stage.getHeight() + deltaY;
+                break;
+            case "N":
+                newHeight = stage.getHeight() - deltaY;
+                newY = stage.getY() + deltaY;
+                break;
+            case "SE":
+                newWidth = stage.getWidth() + deltaX;
+                newHeight = stage.getHeight() + deltaY;
+                break;
+            case "SW":
+                newWidth = stage.getWidth() - deltaX;
+                newHeight = stage.getHeight() + deltaY;
+                newX = stage.getX() + deltaX;
+                break;
+            case "NE":
+                newWidth = stage.getWidth() + deltaX;
+                newHeight = stage.getHeight() - deltaY;
+                newY = stage.getY() + deltaY;
+                break;
+            case "NW":
+                newWidth = stage.getWidth() - deltaX;
+                newHeight = stage.getHeight() - deltaY;
+                newX = stage.getX() + deltaX;
+                newY = stage.getY() + deltaY;
+                break;
+        }
+        
+        // Apply minimum size constraints
+        if (newWidth >= stage.getMinWidth()) {
+            stage.setWidth(newWidth);
+            if (resizeDirection.contains("W")) {
+                stage.setX(newX);
+            }
+        }
+        
+        if (newHeight >= stage.getMinHeight()) {
+            stage.setHeight(newHeight);
+            if (resizeDirection.contains("N")) {
+                stage.setY(newY);
+            }
+        }
+        
+        xOffset = event.getScreenX();
+        yOffset = event.getScreenY();
+    }
+
+    private void handleResizeMouseReleased(MouseEvent event) {
+        isResizing = false;
+        titleBar.getScene().setCursor(Cursor.DEFAULT);
+        resizeDirection = "";
+    }
+
     private boolean loadAppointmentFileWithDialog(File file) {
         AppointmentManager appointmentManager = AppointmentManager.getInstance();
         if (appointmentManager.loadFromFile(file.getAbsolutePath())) {
@@ -184,16 +334,22 @@ public class MainMenuController {
     }
 
     private void handleMousePressed(MouseEvent event) {
-        // Record the initial click position
-        xOffset = event.getSceneX();
-        yOffset = event.getSceneY();
+        // Only handle dragging if we're not in a resize area and not resizing
+        if (resizeDirection.isEmpty() && !isResizing) {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        }
     }
 
     private void handleMouseDragged(MouseEvent event) {
-        // Get the stage and move it based on mouse movement
-        Stage stage = (Stage) titleBar.getScene().getWindow();
-        stage.setX(event.getScreenX() - xOffset);
-        stage.setY(event.getScreenY() - yOffset);
+        // Only drag window if we're not resizing and not in a resize area
+        if (resizeDirection.isEmpty() && !isResizing) {
+            Stage stage = (Stage) titleBar.getScene().getWindow();
+            if (!stage.isMaximized()) {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            }
+        }
     }
 
     @FXML
