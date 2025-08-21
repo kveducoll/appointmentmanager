@@ -22,7 +22,7 @@
       <VBox spacing="0.0">
          <children>
             <!-- Custom Title Bar -->
-            <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="47.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
+            <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseClicked="#onTitleBarClicked" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="47.0" style="-fx-background-color: #151515; -fx-padding: 10px;">
                <children>
                   <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                      <image>
