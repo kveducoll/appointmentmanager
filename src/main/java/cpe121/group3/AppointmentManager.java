@@ -3,6 +3,9 @@ package cpe121.group3;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.prefs.Preferences;
+import java.io.File;
 
 /**
  * Singleton class that manages appointment operations and database persistence.
@@ -14,12 +17,16 @@ public class AppointmentManager {
     private ObservableList<Appointment> appointments;
     private DatabaseManager databaseManager;
     private String currentFilePath;
+    private static final int MAX_RECENT_FILES = 5;
+    private static final String RECENT_FILES_KEY = "recentFiles";
+    private Preferences prefs;
 
     private boolean unsaved = false;
 
     private AppointmentManager() {
         appointments = FXCollections.observableArrayList();
         databaseManager = new DatabaseManager();
+        prefs = Preferences.userNodeForPackage(AppointmentManager.class);
     }
 
     public static AppointmentManager getInstance() {
@@ -111,6 +118,10 @@ public class AppointmentManager {
                         return false;
                     }
                 }
+                
+                // Add to recent files
+                addToRecentFiles(filePath);
+                
                 result = true;
             }
         } catch (Exception e) {
@@ -139,6 +150,9 @@ public class AppointmentManager {
                 // Clear current appointments and add loaded ones
                 appointments.clear();
                 appointments.addAll(loadedAppointments);
+                
+                // Add to recent files
+                addToRecentFiles(filePath);
                 
                 result = true;
             }
@@ -220,5 +234,57 @@ public class AppointmentManager {
         databaseManager.closeConnection();
         currentFilePath = null;
         appointments.clear();
+    }
+
+    // Recent files management
+    public void addToRecentFiles(String filePath) {
+        if (filePath == null || !new File(filePath).exists()) {
+            return;
+        }
+        
+        List<String> recentFiles = getRecentFiles();
+        
+        // Remove if already exists
+        recentFiles.remove(filePath);
+        
+        // Add to beginning
+        recentFiles.add(0, filePath);
+        
+        // Keep only MAX_RECENT_FILES
+        if (recentFiles.size() > MAX_RECENT_FILES) {
+            recentFiles = recentFiles.subList(0, MAX_RECENT_FILES);
+        }
+        
+        // Save to preferences
+        saveRecentFiles(recentFiles);
+    }
+    
+    public List<String> getRecentFiles() {
+        List<String> recentFiles = new ArrayList<>();
+        for (int i = 0; i < MAX_RECENT_FILES; i++) {
+            String filePath = prefs.get(RECENT_FILES_KEY + i, null);
+            if (filePath != null && new File(filePath).exists()) {
+                recentFiles.add(filePath);
+            }
+        }
+        return recentFiles;
+    }
+    
+    private void saveRecentFiles(List<String> recentFiles) {
+        // Clear existing preferences
+        for (int i = 0; i < MAX_RECENT_FILES; i++) {
+            prefs.remove(RECENT_FILES_KEY + i);
+        }
+        
+        // Save new list
+        for (int i = 0; i < recentFiles.size() && i < MAX_RECENT_FILES; i++) {
+            prefs.put(RECENT_FILES_KEY + i, recentFiles.get(i));
+        }
+    }
+    
+    public void clearRecentFiles() {
+        for (int i = 0; i < MAX_RECENT_FILES; i++) {
+            prefs.remove(RECENT_FILES_KEY + i);
+        }
     }
 }
