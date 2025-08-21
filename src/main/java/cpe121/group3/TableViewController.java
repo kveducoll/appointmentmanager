@@ -668,9 +668,9 @@ public class TableViewController implements Initializable {
     @FXML
     private void onTitleBarDragged(MouseEvent event) {
         // Only drag window if we're not resizing and not in a resize area
-        if (resizeDirection.isEmpty() && !isResizing) {
+        if (resizeDirection.isEmpty() && !isResizing && titleBar.getScene() != null) {
             Stage stage = (Stage) titleBar.getScene().getWindow();
-            if (!stage.isMaximized()) {
+            if (stage != null && !stage.isMaximized()) {
                 stage.setX(event.getScreenX() - xOffset);
                 stage.setY(event.getScreenY() - yOffset);
             }
@@ -686,19 +686,27 @@ public class TableViewController implements Initializable {
 
     @FXML
     private void minimizeWindow() {
-        Stage stage = (Stage) titleBar.getScene().getWindow();
-        stage.setIconified(true);
+        if (titleBar.getScene() != null) {
+            Stage stage = (Stage) titleBar.getScene().getWindow();
+            if (stage != null) {
+                stage.setIconified(true);
+            }
+        }
     }
 
     @FXML
     private void maximizeWindow() {
-        Stage stage = (Stage) titleBar.getScene().getWindow();
-        if (isMaximized) {
-            stage.setMaximized(false);
-            isMaximized = false;
-        } else {
-            stage.setMaximized(true);
-            isMaximized = true;
+        if (titleBar.getScene() != null) {
+            Stage stage = (Stage) titleBar.getScene().getWindow();
+            if (stage != null) {
+                if (isMaximized) {
+                    stage.setMaximized(false);
+                    isMaximized = false;
+                } else {
+                    stage.setMaximized(true);
+                    isMaximized = true;
+                }
+            }
         }
     }
 
@@ -728,8 +736,11 @@ public class TableViewController implements Initializable {
     private void handleMouseMoved(MouseEvent event) {
         if (isResizing) return;
         
+        // Check if scene is available
+        if (titleBar.getScene() == null) return;
+        
         Stage stage = (Stage) titleBar.getScene().getWindow();
-        if (stage.isMaximized()) return;
+        if (stage == null || stage.isMaximized()) return;
         
         double sceneWidth = titleBar.getScene().getWidth();
         double sceneHeight = titleBar.getScene().getHeight();
@@ -742,33 +753,36 @@ public class TableViewController implements Initializable {
         boolean atTop = mouseY < resizeMargin;
         boolean atBottom = mouseY > sceneHeight - resizeMargin;
         
-        if (atLeft && atTop) {
-            titleBar.getScene().setCursor(Cursor.NW_RESIZE);
-            resizeDirection = "NW";
-        } else if (atRight && atTop) {
-            titleBar.getScene().setCursor(Cursor.NE_RESIZE);
-            resizeDirection = "NE";
-        } else if (atLeft && atBottom) {
-            titleBar.getScene().setCursor(Cursor.SW_RESIZE);
-            resizeDirection = "SW";
-        } else if (atRight && atBottom) {
-            titleBar.getScene().setCursor(Cursor.SE_RESIZE);
-            resizeDirection = "SE";
-        } else if (atLeft) {
-            titleBar.getScene().setCursor(Cursor.W_RESIZE);
-            resizeDirection = "W";
-        } else if (atRight) {
-            titleBar.getScene().setCursor(Cursor.E_RESIZE);
-            resizeDirection = "E";
-        } else if (atTop) {
-            titleBar.getScene().setCursor(Cursor.N_RESIZE);
-            resizeDirection = "N";
-        } else if (atBottom) {
-            titleBar.getScene().setCursor(Cursor.S_RESIZE);
-            resizeDirection = "S";
-        } else {
-            titleBar.getScene().setCursor(Cursor.DEFAULT);
-            resizeDirection = "";
+        // Set cursor based on position (with null check)
+        if (titleBar.getScene() != null) {
+            if (atLeft && atTop) {
+                titleBar.getScene().setCursor(Cursor.NW_RESIZE);
+                resizeDirection = "NW";
+            } else if (atRight && atTop) {
+                titleBar.getScene().setCursor(Cursor.NE_RESIZE);
+                resizeDirection = "NE";
+            } else if (atLeft && atBottom) {
+                titleBar.getScene().setCursor(Cursor.SW_RESIZE);
+                resizeDirection = "SW";
+            } else if (atRight && atBottom) {
+                titleBar.getScene().setCursor(Cursor.SE_RESIZE);
+                resizeDirection = "SE";
+            } else if (atLeft) {
+                titleBar.getScene().setCursor(Cursor.W_RESIZE);
+                resizeDirection = "W";
+            } else if (atRight) {
+                titleBar.getScene().setCursor(Cursor.E_RESIZE);
+                resizeDirection = "E";
+            } else if (atTop) {
+                titleBar.getScene().setCursor(Cursor.N_RESIZE);
+                resizeDirection = "N";
+            } else if (atBottom) {
+                titleBar.getScene().setCursor(Cursor.S_RESIZE);
+                resizeDirection = "S";
+            } else {
+                titleBar.getScene().setCursor(Cursor.DEFAULT);
+                resizeDirection = "";
+            }
         }
     }
 
@@ -787,10 +801,10 @@ public class TableViewController implements Initializable {
      * Handles mouse drag for resize operations
      */
     private void handleResizeMouseDragged(MouseEvent event) {
-        if (!isResizing) return;
+        if (!isResizing || titleBar.getScene() == null) return;
         
         Stage stage = (Stage) titleBar.getScene().getWindow();
-        if (stage.isMaximized()) return;
+        if (stage == null || stage.isMaximized()) return;
         
         double deltaX = event.getScreenX() - xOffset;
         double deltaY = event.getScreenY() - yOffset;
@@ -861,7 +875,12 @@ public class TableViewController implements Initializable {
      */
     private void handleResizeMouseReleased(MouseEvent event) {
         isResizing = false;
-        titleBar.getScene().setCursor(Cursor.DEFAULT);
+        
+        // Check if scene is available
+        if (titleBar.getScene() != null) {
+            titleBar.getScene().setCursor(Cursor.DEFAULT);
+        }
+        
         resizeDirection = "";
     }
 
