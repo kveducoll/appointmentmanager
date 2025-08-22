@@ -195,6 +195,52 @@ public class DatabaseManager {
         }
     }
 
+    // Bulk save appointments with transaction for better performance and consistency
+    public boolean saveAllAppointments(List<Appointment> appointments) {
+        if (connection == null) {
+            System.err.println("No database connection available");
+            return false;
+        }
+
+        String insertSQL = "INSERT INTO appointments (title, participant, appointment_date, appointment_time, description, status) " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            // Start transaction
+            connection.setAutoCommit(false);
+            
+            try (PreparedStatement pstmt = connection.prepareStatement(insertSQL)) {
+                for (Appointment appointment : appointments) {
+                    pstmt.setString(1, appointment.getTitle());
+                    pstmt.setString(2, appointment.getParticipant());
+                    pstmt.setString(3, appointment.getAppointmentDate());
+                    pstmt.setString(4, appointment.getAppointmentTime());
+                    pstmt.setString(5, appointment.getDescription());
+                    pstmt.setString(6, appointment.getStatus());
+                    pstmt.addBatch();
+                }
+                
+                pstmt.executeBatch();
+                connection.commit();
+                return true;
+            }
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                System.err.println("Error rolling back transaction: " + rollbackEx.getMessage());
+            }
+            System.err.println("Error saving appointments: " + e.getMessage());
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.err.println("Error resetting auto-commit: " + e.getMessage());
+            }
+        }
+    }
+
     // Get filepath
     public String getCurrentDatabasePath() {
         return currentDatabasePath;
