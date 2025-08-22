@@ -111,12 +111,16 @@ public class AppointmentManager {
             if (databaseManager.connectToDatabase(filePath)) {
                 currentFilePath = filePath;
                 
-                // Save all current appointments to the new database
-                for (Appointment appointment : appointments) {
-                    if (!databaseManager.saveAppointment(appointment)) {
-                        System.err.println("Failed to save appointment: " + appointment.getTitle());
-                        return false;
-                    }
+                // Clear any existing appointments in the target file and save all in a transaction
+                if (!databaseManager.clearAllAppointments()) {
+                    System.err.println("Failed to clear existing appointments in target file");
+                    return false;
+                }
+                
+                // Use bulk save for better performance
+                if (!databaseManager.saveAllAppointments(new ArrayList<>(appointments))) {
+                    System.err.println("Failed to save appointments");
+                    return false;
                 }
                 
                 // Add to recent files
@@ -171,13 +175,18 @@ public class AppointmentManager {
     public boolean save() {
         boolean result = false;
         if (currentFilePath != null && databaseManager.isConnected()) {
-            // Save all current appointments to the database
-            for (Appointment appointment : appointments) {
-                if (!databaseManager.saveAppointment(appointment)) {
-                    System.err.println("Failed to save appointment: " + appointment.getTitle());
-                    return false;
-                }
+            // Clear existing appointments and save all current ones in a transaction
+            if (!databaseManager.clearAllAppointments()) {
+                System.err.println("Failed to clear existing appointments");
+                return false;
             }
+            
+            // Use bulk save for better performance
+            if (!databaseManager.saveAllAppointments(new ArrayList<>(appointments))) {
+                System.err.println("Failed to save appointments");
+                return false;
+            }
+            
             result = true;
         } else {
             // Prompt for location if no file is open
@@ -268,6 +277,12 @@ public class AppointmentManager {
             }
         }
         return recentFiles;
+    }
+    
+    public void removeFromRecentFiles(String filePath) {
+        List<String> recentFiles = getRecentFiles();
+        recentFiles.remove(filePath);
+        saveRecentFiles(recentFiles);
     }
     
     private void saveRecentFiles(List<String> recentFiles) {
