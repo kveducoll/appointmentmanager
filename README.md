@@ -21,34 +21,49 @@ mvn clean compile javafx:run
 ```
 
 ### Expected Result
-- Application window opens with custom dark title bar
-- "Appointment Manager (Version 1)" header visible
-- Empty table ready for appointments
-- Buttons: Add, Edit, Delete, Refresh available
+- Application window opens with a welcome screen.
+- Options to create a new appointment file or load an existing one.
+- Drag-and-drop support for `.apf` (Appointment File) files.
 
 ## Usage Guide
 
+### Creating or Loading an Appointment File
+1.  Launch the application.
+2.  On the main menu, click **"New"** to create a new `.apf` file or **"Load"** to open an existing one.
+3.  You can also drag and drop an `.apf` file onto the application window.
+
 ### Adding an Appointment
-1. Click the **"Add Appointment"** button
-2. Fill in the form fields:
+1. Once an appointment file is loaded, the table view will be displayed.
+2. Click the **"Add"** button.
+3. Fill in the form fields:
    - **Title**: What the appointment is about
    - **Participant**: Person involved in the appointment
    - **Date**: Select appointment date using the date picker
    - **Time**: Enter time in HH:MM format (e.g., 14:30)
    - **Description**: Additional details about the appointment
    - **Status**: Select from dropdown (Scheduled, Confirmed, etc.)
-3. Click **"Save Appointment"** to add to the list
+4. Click **"Save"** to add to the list.
 
 ### Editing an Appointment
-1. Select an appointment from the table
-2. Click **"Edit Appointment"** button
-3. Modify the fields as needed
-4. Click **"Save Appointment"** to update
+1. Select an appointment from the table.
+2. Click the **"Edit"** button.
+3. Modify the fields as needed.
+4. Click **"Save"** to update.
 
 ### Deleting an Appointment
-1. Select an appointment from the table
-2. Click **"Delete Appointment"** button
-3. Confirm deletion in the popup dialog
+1. Select an appointment from the table.
+2. Click the **"Delete"** button.
+3. Confirm deletion in the popup dialog.
+
+### Filtering Appointments
+1. Click the **"Filter"** button to open the filter options.
+2. Enable and specify criteria for title, participant, date range, status, or description.
+3. Click **"Apply Filter"** to see the results.
+
+### Updating Status
+1. Right-click an appointment and select **"Update Status"**.
+2. Choose a new status from the dropdown.
+3. Click **"Update"** to save the change.
 
 ## Project Structure
 
@@ -63,85 +78,89 @@ appointmentmanager/
         │       ├── App.java                            # Main application class
         │       ├── Appointment.java                    # Appointment data model
         │       ├── AppointmentManager.java             # Data management singleton
+        │       ├── DatabaseManager.java                # SQLite database handler
         │       ├── MainMenuController.java             # Main menu controller
-        │       ├── PopupFormController.java            # Popup form controller
-        │       └── TableViewController.java            # Table view controller
+        │       ├── TableViewController.java            # Table view controller
+        │       ├── PopupFormController.java            # Add/Edit form controller
+        │       ├── FilterController.java               # Filter form controller
+        │       ├── StatusUpdateController.java         # Status update controller
+        │       └── AboutController.java                # About page controller
         └── resources/
             └── cpe121/group3/
                 ├── mainmenu.fxml                       # Main menu layout
-                ├── popupform.fxml                      # Popup form layout
                 ├── tableview.fxml                      # Table view layout
+                ├── popupform.fxml                      # Add/Edit form layout
+                ├── filter.fxml                         # Filter form layout
+                ├── statusupdate.fxml                   # Status update layout
+                ├── about.fxml                          # About page layout
                 ├── assets/
                 │   └── Appointment-Manager-Logo.png    # Application logo
                 ├── iconpack/                           # UI icons for buttons and interface
                 └── style/
-                    └── tableviewMenuStyle.css          # CSS styling
+                    └── *.css                           # CSS stylesheets
 ```
 
 ## Architecture
 
-### Model
-- **Model**: `Appointment.java` and `AppointmentManager.java`
-- **View**: FXML files (`mainmenu.fxml`, `popupform.fxml`, `tableview.fxml`)
-- **Controller**: `MainMenuController.java`, `PopupFormController.java`, and `TableViewController.java`
+### Model-View-Controller (MVC)
+- **Model**: `Appointment.java`, `AppointmentManager.java`, `DatabaseManager.java`
+- **View**: FXML files (`mainmenu.fxml`, `tableview.fxml`, `popupform.fxml`, etc.)
+- **Controller**: `MainMenuController.java`, `TableViewController.java`, `PopupFormController.java`, `FilterController.java`, `StatusUpdateController.java`, `AboutController.java`
 
 ### Key Classes
 
 #### `App.java`
-- Main application entry point
-- Configures the JavaFX stage with custom title bar
-- Handles scene management and FXML loading
+- Main application entry point.
+- Configures the JavaFX stage and loads the initial `mainmenu.fxml` scene.
 
 #### `Appointment.java`
-- Data model representing a single appointment
-- Uses JavaFX Properties for data binding
-- Fields: title, participant, date, time, description, status
+- Data model for a single appointment, using JavaFX Properties for data binding.
 
 #### `AppointmentManager.java`
-- Singleton pattern for managing appointment data
-- Provides CRUD operations (Create, Read, Update, Delete)
-- Uses ObservableList for real-time UI updates
+- Singleton for managing the `ObservableList` of appointments in memory.
+
+#### `DatabaseManager.java`
+- Handles all SQLite database operations (CRUD) for storing and retrieving appointments.
 
 #### `MainMenuController.java`
-- Controls the main menu view
-- Handles navigation and table display
-- Implements custom window controls
-
-#### `PopupFormController.java`
-- Controls the popup form view
-- Handles form validation and data input
-- Manages both add and edit modes
+- Controls the main welcome screen.
+- Handles creating new, loading, and drag-and-dropping `.apf` database files.
 
 #### `TableViewController.java`
-- Manages the table view layout
-- Handles table-specific operations like sorting and filtering
+- Manages the main table view displaying appointments.
+- Integrates with controllers for adding, editing, deleting, filtering, and updating status.
+
+#### `PopupFormController.java`
+- Controls the popup form for adding and editing appointments.
+
+#### `FilterController.java`
+- Manages the filtering UI and applies `FilterCriteria` to the appointment list.
+
+#### `StatusUpdateController.java`
+- Controls the UI for quick status updates on an appointment.
 
 ## Data Storage
 
-The application uses **in-memory storage** with JavaFX ObservableList:
-- No database setup required
-- Data persists during application session
-- Data is lost when application closes
-- SQLite Will be added soon
+The application uses **SQLite** for data persistence.
+- Appointments are stored in a local file with an `.apf` extension.
+- The `DatabaseManager` class handles all interactions with the SQLite database.
+- Data is saved automatically upon modification.
 
 ## Troubleshooting
 
 ### Common Issues
 
 **Application won't start**
-- Ensure Java 11+ is installed
-- Verify JavaFX modules are available
-- Check Maven is properly configured
+- Ensure Java 11+ and Maven are installed and configured correctly.
+- Verify JavaFX modules are available.
 
 **FXML Loading Errors**
-- Verify FXML files are in correct resource location
-- Check controller class names match FXML fx:controller attributes
-- Ensure all @FXML annotations are present
+- Check that FXML files are in the correct resource location.
+- Ensure `fx:controller` attributes in FXML match the controller class paths.
 
-**Window Controls Not Working**
-- Verify StageStyle.UNDECORATED is set in App.java
-- Check mouse event handlers are properly connected
-- Ensure controller methods are public and have @FXML annotation
+**Database Connection Errors**
+- Ensure you have permissions to write files in the chosen directory.
+- Verify the `.apf` file is not corrupted.
 
 ## Development
 
